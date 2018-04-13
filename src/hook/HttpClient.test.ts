@@ -1,6 +1,7 @@
 import {HttpClientPatcher} from './HttpClinet'
+import {HttpServerPatcher} from './HttpServer'
 import * as tracer from 'tracer'
-import * as nock from 'nock'
+import * as http from 'http'
 import * as request from 'superagent'
 import {MessageConstants, MessageSender} from '../util/MessageSender'
 import {TraceManager} from '../trace/TraceManager'
@@ -9,34 +10,45 @@ process.env.DEBUG = 'Klg:Tracer:*'
 
 const logger = tracer.console({})
 describe('http client hook test', async function () {
-  const traceManager = TraceManager.getInstance()
+  let server
   beforeAll(() => {
+    new HttpServerPatcher().shimmer()
     new HttpClientPatcher().shimmer()
+
+    server = http.createServer((req, res) => {
+      res.writeHead(200, {'Content-Type': 'text/plain'})
+      res.end(JSON.stringify({msg: 'Hello Pandora.js'}))
+    }).listen(4005)
   })
 
-  it(' test query ', (done) => {
-    nock('http://localhost:40001')
-      .get(/.*/)
-      .reply(200, {
-        _id: '123ABC',
-        _rev: '946B7D1C',
-        username: 'pgte',
-        email: 'pedro.teixeira@gmail.com'
-      })
+  it(' test query ', async () => {
+    new MessageSender().on(MessageConstants.TRACE, data => {
+      expect(data.timestamp).toBeDefined()
+      expect(data.duration).toBeDefined()
+      expect(data.status).toBeDefined()
+      expect(data.traceId).toBeDefined()
+      expect(data.userId).toBeDefined()
+      expect(data.spans).toBeDefined()
+      expect(data.spans.length).toEqual(1)
+      expect(data.spans[0].name).toEqual('http')
+      console.log('data', data)
+      console.log('span', data.spans[0])
 
-    traceManager.run(function () {
-      traceManager.create({traceId: '1231231231231231231'})
-      request.get('http://localhost:40001/hello').query({msg: 'hello'})
-        .set('X-API-Key', 'foobar')
-        .set('Accept', 'application/json')
-        .end(function (err, res) {
-          if (res) {
-            logger.info('yay got ' + JSON.stringify(res.body))
-          } else {
-            logger.info('Oh no! error ' + err)
-          }
-          done()
-        })
+      const tags = data.spans[0].tags
+      expect(tags['http.method']).toEqual({value: 'GET', type: 'string'})
+      expect(tags['http.url']).toEqual({value: '/hello', type: 'string'})
     })
+
+    const res = await request.get('http://localhost:4005/hello').query({msg: 'hello'})
+      .set('X-API-Key', 'foobar')
+      .set('Accept', 'application/json')
+      .end()
+
+    expect.hasAssertions()
+    logger.info(res.body)
+  })
+
+  afterAll(done => {
+    server.close(done)
   })
 })
