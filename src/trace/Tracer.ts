@@ -1,10 +1,18 @@
-import {NORMAL_TRACE, TIMEOUT_TRACE, SLOW_TRACE, ERROR_TRACE} from '../util/Constants'
-import * as EventEmitter from 'events'
-import * as mixin from 'mixin'
+'use strict'
 import {Tracer as OpenTrancer} from 'opentracing'
+import {PandoraSpan} from './PandoraSpan'
+import SpanContext from './SpanContext'
+import {TraceData, TracerReport} from '../domain'
+import {NORMAL_TRACE, CURRENT_SPAN, TIMEOUT_TRACE, SLOW_TRACE, ERROR_TRACE} from '../util/Constants'
+
+const debug = require('debug')('Klg:Tracer:Metrics:Tracer')
+const EventEmitter = require('events')
+const mixin = require('mixin')
 
 export class Tracer extends (mixin(OpenTrancer, EventEmitter) as { new (): any }) {
+
   options
+  spans = []
   namespace
   startMs = Date.now()
   finishMs = 0
@@ -12,7 +20,7 @@ export class Tracer extends (mixin(OpenTrancer, EventEmitter) as { new (): any }
   status = NORMAL_TRACE
   _finished = false
 
-  private attrs: Map<string, any> = new Map()
+  private attrs: Map<string, TracerReport> = new Map()
 
   constructor (options: { ns?, traceId? } = {}) {
     super()
@@ -21,8 +29,19 @@ export class Tracer extends (mixin(OpenTrancer, EventEmitter) as { new (): any }
     this.traceId = options.traceId
   }
 
-  setAttr (key, value: any) {
-    this.attrs.set(key, value)
+  setAttr (key, value: TracerReport | string) {
+    if (typeof value === 'string') {
+      this.attrs.set(key, {
+        report () {
+          return value
+        },
+        getValue () {
+          return value
+        }
+      })
+    } else {
+      this.attrs.set(key, value)
+    }
   }
 
   named (name) {
@@ -30,23 +49,52 @@ export class Tracer extends (mixin(OpenTrancer, EventEmitter) as { new (): any }
   }
 
   get name () {
-    return this.getAttr('name') || ''
+    return this.getAttrValue('name') || ''
   }
 
   get traceId () {
-    return this.getAttr('traceId') || ''
+    return this.getAttrValue('traceId') || ''
   }
 
   set traceId (traceId) {
     this.setAttr('traceId', traceId)
   }
 
-  getAttr (key) {
+  getAttr (key): TracerReport {
     return this.attrs.get(key)
+  }
+
+  getAttrValue (key, defaultValue?) {
+    let ret = defaultValue
+
+    if (this.hasAttr(key)) {
+      const item = this.attrs.get(key)
+      ret = item.getValue && item.getValue() || item || defaultValue
+    } else {
+      ret = defaultValue
+    }
+
+    return ret
   }
 
   hasAttr (key) {
     return this.attrs.has(key)
+  }
+
+  getCurrentSpan () {
+    if (this.namespace) {
+      return this.namespace.get(CURRENT_SPAN)
+    }
+  }
+
+  setCurrentSpan (span) {
+    try {
+      if (this.namespace) {
+        this.namespace.set(CURRENT_SPAN, span)
+      }
+    } catch (error) {
+      debug('Set current span error.', error)
+    }
   }
 
   finish (options = {}) {
@@ -60,6 +108,7 @@ export class Tracer extends (mixin(OpenTrancer, EventEmitter) as { new (): any }
         this.setStatus(SLOW_TRACE)
       }
     }
+
     (this as any).emit('finish', this)
   }
 
@@ -77,16 +126,46 @@ export class Tracer extends (mixin(OpenTrancer, EventEmitter) as { new (): any }
     this.status = this.status | status
   }
 
-  report () {
+  report (): TraceData {
+    const spans = this.spans
+
     const result = {
       timestamp: this.startMs,
       duration: this.duration,
+      spans: spans.map((span) => {
+        return span.toJSON()
+      }),
       status: this.status
     }
 
     for (let [key, value] of this.attrs.entries()) {
-      result[key] = value
+      const v = value.report()
+
+      if (v !== false) {
+        result[key] = v
+      }
     }
+
     return result
   }
+
+  protected _startSpan (name: string, fields) {
+    // allocSpan is given it's own method so that derived classes can
+    // allocate any type of object they want, but not have to duplicate
+    // the other common logic in startSpan().
+    const ctx = new SpanContext(fields)
+    const span = this._allocSpan(name, ctx)
+    this.spans.push(span)
+
+    if (fields.references) {
+      span.addReferences(fields.references)
+    }
+
+    return span
+  }
+
+  private _allocSpan (operationName, spanContext) {
+    return new PandoraSpan(this, operationName, spanContext)
+  }
+
 }

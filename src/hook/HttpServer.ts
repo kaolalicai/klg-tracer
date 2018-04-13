@@ -1,7 +1,7 @@
 import * as http from 'http'
 import {Patcher} from './Patcher'
 import {HEADER_TRACE_ID} from '../util/Constants'
-import {getRandom64} from '../util/TracerUtil'
+import {getRandom64} from '../util/TraceUtil'
 import {wrap} from '../trace/Shimmer'
 import {createNamespace} from 'cls-hooked'
 
