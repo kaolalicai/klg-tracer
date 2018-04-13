@@ -1,0 +1,71 @@
+{
+  "name": "klg-tracer",
+  "version": "1.0.0",
+  "description": "tracer log ",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "lint": "tslint -c tslint.json 'src/**/*.ts' --fix",
+    "build": "tsc -d -p ./",
+    "test": "jest",
+    "cov": "jest --coverage --coverageDirectory=coverage",
+    "prepublishOnly": "npm run build",
+    "pretest": "npm run lint"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "/src/.*\\.(test|spec).(ts|tsx|js)$",
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,tsx,ts}",
+      "!**/node_modules/**",
+      "!**/vendor/**"
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kaolalicai/klg-tracer"
+  },
+  "keywords": [
+    "klg"
+  ],
+  "author": "nick",
+  "license": "MIT",
+  "engines": {
+    "node": ">=8.9.0"
+  },
+  "dependencies": {
+    "@types/node": "^9.6.4",
+    "cls": "^0.1.5",
+    "cls-hooked": "^4.2.2",
+    "http": "0.0.0",
+    "mixin": "^0.2.0",
+    "opentracing": "^0.14.3",
+    "tracer": "^0.8.12",
+    "xorshift": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^22.2.0",
+    "@types/power-assert": "^1.4.29",
+    "jest": "^22.4.2",
+    "klg-request": "^1.0.0",
+    "source-map-support": "^0.5.3",
+    "ts-jest": "^22.4.2",
+    "ts-node": "^5.0.1",
+    "tslint": "^5.9.1",
+    "tslint-config-klg": "^1.0.4",
+    "typescript": "^2.7.2",
+    "webstorm-disable-index": "^1.2.0"
+  }
+}
