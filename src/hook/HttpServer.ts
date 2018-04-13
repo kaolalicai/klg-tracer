@@ -24,8 +24,24 @@ export class HttpServerPatcher extends Patcher {
     return req.headers[HEADER_TRACE_ID] || getRandom64()
   }
 
-  buildTags (req) {
+  buildRequestTags (req) {
+    return {
+      'http.method': {
+        value: req.method.toUpperCase(),
+        type: 'string'
+      },
+      'http.url': {
+        value: extractPath(req.url),
+        type: 'string'
+      },
+      'http.client': {
+        value: false,
+        type: 'bool'
+      }
+    }
+  }
 
+  buildResponseTags (req) {
     return {
       'http.method': {
         value: req.method.toUpperCase(),
@@ -43,7 +59,7 @@ export class HttpServerPatcher extends Patcher {
   }
 
   createSpan (tracer, tags) {
-    const span = tracer.startSpan('http', {
+    const span = tracer.startSpan('http-server', {
       traceId: tracer.traceId
     })
 
@@ -77,10 +93,10 @@ export class HttpServerPatcher extends Patcher {
             traceManager.bindEmitter(res)
 
             const tracer = self.createTracer(req)
-            const tags = self.buildTags(req)
+            const tags = self.buildRequestTags(req)
             const span = self.createSpan(tracer, tags)
-            tracer.setAttr('userId', '122000')
             res.once('finish', () => {
+              // self.buildResponseTags(res)
               span.finish()
               tracer.finish()
             })

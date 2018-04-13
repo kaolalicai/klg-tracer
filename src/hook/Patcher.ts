@@ -1,4 +1,4 @@
-import {IPatcher} from './IPatcher'
+import {IPatcher} from '../domain'
 import {TraceManager} from '../trace/TraceManager'
 import * as shimmer from '../trace/Shimmer'
 

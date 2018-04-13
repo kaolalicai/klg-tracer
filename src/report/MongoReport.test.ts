@@ -30,6 +30,7 @@ describe('http client hook test', async function () {
     const reporter = new MongoReport({mongoUrl: 'mongodb://joda:27017/beta'})
     reporter.crud = {
       save: async () => {
+        // empty
       }
     } as any
     const spySave = jest.spyOn(reporter.crud, 'save')

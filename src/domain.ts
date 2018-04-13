@@ -1,19 +1,15 @@
 export interface IPatcher {
-  hook (version: string, reply: () => {})
 
   getShimmer ()
-
-  getHook ()
 
   getTraceManager ()
 
   getModuleName ()
 
-  run ()
 }
 
 export interface IReport {
-  report (data: SpanData): void
+  report (data: TraceData): void
 }
 
 export interface SpanData {

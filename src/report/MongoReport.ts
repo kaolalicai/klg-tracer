@@ -1,7 +1,8 @@
-import {IReport, SpanData} from '../domain'
+import {IReport} from '../domain'
 import * as mongoose from 'mongoose'
 import * as assert from 'assert'
 import {LogCRUD} from 'klg-log-model'
+import {TraceData} from '../domain'
 
 export interface MongoReportOption {
   mongoUrl: string,
@@ -18,7 +19,7 @@ export class MongoReport implements IReport {
     this.initDb()
   }
 
-  async report (data: SpanData) {
+  async report (data: TraceData) {
     const logs = this.transData(data)
     this.crud.save(logs)
   }
@@ -28,7 +29,7 @@ export class MongoReport implements IReport {
     this.crud = new LogCRUD(db, this.options.collectionName)
   }
 
-  transData (data: SpanData) {
+  transData (data: TraceData) {
     return data
   }
 }
