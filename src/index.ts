@@ -1,3 +1,5 @@
 export * from './hook/HttpServer'
-export * from './hook/HttpClinet'
+export * from './hook/HttpClient'
 export * from './trace/TraceManager'
+export * from './domain'
+export * from './TraceService'

@@ -1,10 +1,9 @@
-import {HttpClientPatcher} from './HttpClinet'
+import {HttpClientPatcher} from './HttpClient'
 import {HttpServerPatcher} from './HttpServer'
 import * as tracer from 'tracer'
 import * as http from 'http'
 import * as request from 'superagent'
 import {MessageConstants, MessageSender} from '../util/MessageSender'
-import {TraceManager} from '../trace/TraceManager'
 
 process.env.DEBUG = 'Klg:Tracer:*'
 
@@ -31,7 +30,7 @@ describe('http client hook test', async function () {
       expect(data.spans).toBeDefined()
       expect(data.spans.length).toEqual(1)
       expect(data.spans[0].name).toEqual('http')
-      console.log('data', data)
+      console.log('data', JSON.stringify(data))
       console.log('span', data.spans[0])
 
       const tags = data.spans[0].tags

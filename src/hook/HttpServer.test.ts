@@ -4,6 +4,8 @@ import * as tracer from 'tracer'
 import {Request} from 'klg-request'
 import {MessageConstants, MessageSender} from '../util/MessageSender'
 
+process.env.DEBUG = 'Klg:Tracer:*'
+
 const logger = tracer.console({})
 const request = new Request()
 describe('http server hook test', async function () {

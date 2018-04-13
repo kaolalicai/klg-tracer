@@ -50,6 +50,8 @@
     "cls": "^0.1.5",
     "cls-hooked": "^4.2.2",
     "http": "0.0.0",
+    "klg-log-model": "^1.0.1",
+    "klg-logger": "^1.0.4",
     "mixin": "^0.2.0",
     "opentracing": "^0.14.3",
     "tracer": "^0.8.12",

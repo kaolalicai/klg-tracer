@@ -12,6 +12,10 @@ export interface IPatcher {
   run ()
 }
 
+export interface IReport {
+  report (data: SpanData): void
+}
+
 export interface SpanData {
   name: string
   references: Array<{

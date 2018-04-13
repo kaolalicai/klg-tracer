@@ -39,7 +39,7 @@ export class HttpServerPatcher extends Patcher {
         value: false,
         type: 'bool'
       }
-    };
+    }
   }
 
   createSpan (tracer, tags) {
