@@ -1,14 +1,14 @@
 import * as http from 'http'
 import {Patcher} from './Patcher'
-import {HEADER_TRACE_ID} from './Constants'
+import {HEADER_TRACE_ID} from '../util/Constants'
 import {getRandom64} from '../util/TracerUtil'
-import {wrap} from '../util/FunctionUtil'
+import {wrap} from '../trace/Shimmer'
 import {createNamespace} from 'cls-hooked'
 
-export class HttpServer extends Patcher {
+export class HttpServerPatcher extends Patcher {
 
-  constructor () {
-    super()
+  constructor (options = {}) {
+    super(options)
   }
 
   getModule (): any {

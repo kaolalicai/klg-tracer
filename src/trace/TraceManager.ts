@@ -1,7 +1,7 @@
 const TRACEID = 'traceId'
 import {Tracer} from './Tracer'
 import {MessageConstants, MessageSender} from '../util/MessageSender'
-import {TRACER_TIMEOUT} from './Constants'
+import {TRACER_TIMEOUT} from '../util/Constants'
 import * as cls from 'cls-hooked'
 import * as uuid from 'uuid'
 

@@ -1,6 +1,4 @@
-import * as debug from 'debug'
-// Default to complaining loudly when things don't go according to plan.
-let logger = debug('Klg:Tracer:Util:FunctionUtil')
+const debug = require('debug')('Pandora:Metrics:Shimmer')
 
 function isAsyncFunction (funktion) {
   return funktion && {}.toString.call(funktion) === '[object AsyncFunction]'
@@ -23,6 +21,9 @@ function isGeneratorFunction (funktion) {
 function isFunction (funktion) {
   return funktion && ({}.toString.call(funktion) === '[object Function]' || isGeneratorFunction(funktion) || isAsyncFunction(funktion))
 }
+
+// Default to complaining loudly when things don't go according to plan.
+let logger = debug
 
 // Sets a property on an object, preserving its enumerability.
 // This function assumes that the property is already writable.

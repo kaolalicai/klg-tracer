@@ -1,4 +1,4 @@
-import {wrap} from './FunctionUtil'
+import {wrap} from './Shimmer'
 import * as tracer from 'tracer'
 
 const logger = tracer.console({})

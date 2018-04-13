@@ -1,9 +1,9 @@
-import {NORMAL_TRACE, TIMEOUT_TRACE, SLOW_TRACE, ERROR_TRACE} from './Constants'
+import {NORMAL_TRACE, TIMEOUT_TRACE, SLOW_TRACE, ERROR_TRACE} from '../util/Constants'
 import * as EventEmitter from 'events'
 import * as mixin from 'mixin'
-import { Tracer as OpenTrancer } from 'opentracing'
+import {Tracer as OpenTrancer} from 'opentracing'
 
-export class Tracer extends (mixin(OpenTrancer, EventEmitter) as { new(): any }) {
+export class Tracer extends (mixin(OpenTrancer, EventEmitter) as { new (): any }) {
   options
   namespace
   startMs = Date.now()

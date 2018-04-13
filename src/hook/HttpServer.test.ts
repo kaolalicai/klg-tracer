@@ -1,4 +1,4 @@
-import {HttpServer} from './HttpServer'
+import {HttpServerPatcher} from './HttpServer'
 import * as http from 'http'
 import * as tracer from 'tracer'
 import {Request} from 'klg-request'
@@ -6,12 +6,11 @@ import {MessageConstants, MessageSender} from '../util/MessageSender'
 
 const logger = tracer.console({})
 const request = new Request()
-describe('httpserver hook test', async function () {
+describe('http server hook test', async function () {
   let server
 
   beforeAll(done => {
-    const hook = new HttpServer()
-    hook.shimmer()
+    new HttpServerPatcher().shimmer()
 
     server = http.createServer((req, res) => {
       res.writeHead(200, {'Content-Type': 'text/plain'})
