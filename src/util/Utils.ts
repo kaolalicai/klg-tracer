@@ -34,6 +34,14 @@ export function extractPath (requestUrl) {
   return path
 }
 
+export function safeParse (str) {
+  try {
+    return JSON.parse(str)
+  } catch (e) {
+    return str
+  }
+}
+
 export function isLocalhost (host) {
   return !!LOCALHOST_NAMES[host]
 }

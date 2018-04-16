@@ -1,7 +1,8 @@
 const assert = require('assert')
 const debug = require('debug')('Klg:Tracer:HttpClient:Shimmer')
 import {DEFAULT_HOST, DEFAULT_PORT, HEADER_SPAN_ID, HEADER_TRACE_ID} from '../../../util/Constants'
-import {nodeVersion} from '../../../util/Utils'
+import {nodeVersion, safeParse} from '../../../util/Utils'
+import {query} from '../../../util/QueryParser'
 import {ClientRequest} from 'http'
 
 // TODO: 接受参数，处理或记录请求详情
@@ -121,6 +122,29 @@ export class HttpClientShimmer {
         return bindRequestEmit.apply(this, arguments)
       }
     })
+
+    // 为了记录 request post 参数
+    shimmer.wrap(request, 'write', function requestWriteWrapper (write) {
+      const bindRequestWrite = traceManager.bind(write)
+
+      return function wrappedRequestWrite (this: ClientRequest, chunk, encoding) {
+        if (chunk && typeof(chunk) === 'string') {
+          self.handleBody(span, chunk)
+        }
+        return bindRequestWrite.apply(this, arguments)
+      }
+    })
+  }
+
+  handleBody (this: any, span, chunk) {
+    if (span) {
+      span.addTags({
+        'http.body': {
+          value: safeParse(chunk),
+          type: 'object'
+        }
+      })
+    }
   }
 
   handleError (this: any, span, arg) {
@@ -178,8 +202,6 @@ export class HttpClientShimmer {
   }
 
   protected _responseEnd (res, span) {
-    const socket = res.socket
-    const remoteIp = socket ? (socket.remoteAddress ? `${socket.remoteAddress}:${socket.remotePort}` : '') : ''
     const responseSize = (res.headers && res.headers['content-length']) || res.responseSize
 
     span.setTag('http.status_code', {
@@ -187,10 +209,17 @@ export class HttpClientShimmer {
       value: res.statusCode
     })
 
-    span.setTag('http.remote_ip', {
-      type: 'number',
-      value: remoteIp
-    })
+    if (res && res.headers && res.headers['content-type'] === 'application/json') {
+      span.setTag('http.response', {
+        type: 'object',
+        value: safeParse(res.text)
+      })
+    }
+
+    // span.setTag('http.remote_ip', {
+    //   type: 'number',
+    //   value: remoteIp
+    // })
 
     span.setTag('http.response_size', {
       type: 'number',
@@ -206,9 +235,9 @@ export class HttpClientShimmer {
     const options = args[0]
 
     return {
-      'http.client': {
-        value: true,
-        type: 'bool'
+      'http.query': {
+        value: query({url: request.path}),
+        type: 'object'
       },
       'http.method': {
         value: options.method || 'GET', // use 'GET' default, like node.js
@@ -220,7 +249,7 @@ export class HttpClientShimmer {
       },
       'http.port': {
         value: options.port || options._defaultAgent && options._defaultAgent.defaultPort || DEFAULT_PORT,
-        type: 'string'
+        type: 'number'
       },
       'http.path': {
         value: request.path || '/', // use '/' default, like node.js

@@ -3,8 +3,8 @@ import {Patcher} from './Patcher'
 import {HEADER_TRACE_ID} from '../util/Constants'
 import {getRandom64} from '../util/TraceUtil'
 import {extractPath} from '../util/Utils'
+import {query} from '../util/QueryParser'
 import {wrap} from '../trace/Shimmer'
-import {query} from './shimmers/http-server/QueryParser'
 import {createNamespace} from 'cls-hooked'
 
 export class HttpServerPatcher extends Patcher {
@@ -100,8 +100,8 @@ export class HttpServerPatcher extends Patcher {
             const tags = self.buildRequestTags(req)
             const span = self.createSpan(tracer, tags)
 
-            tracer.named(`HTTP-${tags['http.method'].value}:${tags['http.url'].value}`);
-            tracer.setCurrentSpan(span);
+            tracer.named(`HTTP-${tags['http.method'].value}:${tags['http.url'].value}`)
+            tracer.setCurrentSpan(span)
 
             res.once('finish', () => {
               // self.buildResponseTags(res)
