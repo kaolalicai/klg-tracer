@@ -1,6 +1,6 @@
 {
   "name": "klg-tracer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "tracer log ",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
