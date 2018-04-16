@@ -24,8 +24,8 @@ export class TraceService {
   }
 
   registerMongoReporter (options: MongoReportOption) {
-    new MessageSender().on(MessageConstants.TRACE, data => {
-      new MongoReport(options).report(data).then(result => {
+    new MessageSender().on(MessageConstants.TRACE, tracer => {
+      new MongoReport(options).report(tracer).then(result => {
         // empty
       }).catch(err => {
         logger.err('save mongo report err', err)

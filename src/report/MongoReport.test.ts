@@ -1,4 +1,3 @@
-import * as http from 'http'
 import {MongoReport} from './MongoReport'
 import {tracer} from './MongoReport.test.data'
 
@@ -9,24 +8,26 @@ describe('http client hook test', async function () {
 
     jest.spyOn(MongoReport.prototype, 'initDb')
     const reporter = new MongoReport({mongoUrl: 'mongodb://joda:27017/beta'})
-    const plans = reporter.transData(tracer)
-    expect(plans).toBeDefined()
-    expect(plans.length).toEqual(3)
+    const tracers = reporter.transData(tracer)
+
+    console.log('tracers', tracers)
+    expect(tracers).toBeDefined()
+    expect(tracers.length).toEqual(3)
   })
 
-  it.skip(' test transData ', async () => {
+  it(' test report ', async () => {
 
     const spy = jest.spyOn(MongoReport.prototype, 'initDb')
     const reporter = new MongoReport({mongoUrl: 'mongodb://joda:27017/beta'})
     reporter.crud = {
-      save: async () => {
+      patchSave: async () => {
         // empty
       }
     } as any
-    const spySave = jest.spyOn(reporter.crud, 'save')
+    const spySave = jest.spyOn(reporter.crud, 'patchSave')
     await reporter.report(tracer)
 
-    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledTimes(2)
     expect(spySave).toHaveBeenCalledTimes(1)
   })
 })

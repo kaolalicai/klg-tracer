@@ -1,8 +1,7 @@
 import {IReport} from '../domain'
-import * as _ from 'lodash'
 import * as mongoose from 'mongoose'
 import * as assert from 'assert'
-import {LogCRUD} from 'klg-log-model'
+import {TracerCRUD} from 'klg-tracer-model'
 import {TraceData} from '../domain'
 
 export interface MongoReportOption {
@@ -12,7 +11,7 @@ export interface MongoReportOption {
 
 export class MongoReport implements IReport {
   options: MongoReportOption
-  crud: LogCRUD
+  crud: TracerCRUD
 
   constructor (options: MongoReportOption) {
     assert(options.mongoUrl, 'mongoUrl must given')
@@ -21,22 +20,36 @@ export class MongoReport implements IReport {
   }
 
   async report (data: TraceData) {
-    const logs = this.transData(data)
-    this.crud.save(logs)
+    const tracers = this.transData(data)
+    await this.crud.patchSave(tracers)
   }
 
   initDb () {
     const db = mongoose.createConnection(this.options.mongoUrl)
-    this.crud = new LogCRUD(db, this.options.collectionName)
+    this.crud = new TracerCRUD(db, this.options.collectionName)
   }
 
   transData (data: TraceData): Array<any> {
     let result = []
     for (let span of data.spans) {
-      const newSpan = Object.assign({
-        status: data.status
-      }, _.cloneDeep(span))
-      result.push(newSpan)
+      result.push({
+        traceId: data.traceId,
+        userI: data.traceId,
+        name: span.name,
+        timestamp: span.timestamp,
+        duration: span.duration,
+        tags: {
+          httpMethod: span.tags['http.method'],
+          hostname: span.tags['http.hostname'],
+          port: span.tags['http.port'],
+          response_size: span.tags['http.response_size'],
+          status_code: span.tags['http.status_code'],
+          url: span.tags['http.url'],
+          query: span.tags['http.query'],
+          body: span.tags['http.body'],
+          response: span.tags['http.response']
+        }
+      })
     }
     return result
   }
