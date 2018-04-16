@@ -1,12 +1,25 @@
 import {HttpServerPatcher} from './hook/HttpServer'
+import {KoaServerPatcher} from './hook/KoaServer'
 import {HttpClientPatcher} from './hook/HttpClient'
 import {MongoReportOption, MongoReport} from './report/MongoReport'
 import {MessageConstants, MessageSender} from './util/MessageSender'
 import {logger} from './util/Logger'
 
+export interface HookOptions {
+  httpClient: boolean,
+  slowThreshold: boolean
+}
+
+const defaultOptions = {httpClient: true, slowThreshold: true}
+
 export class TraceService {
-  registerHooks (options: { httpClient: boolean } = {httpClient: true}) {
+  registerHttpHooks (options: HookOptions = defaultOptions) {
     new HttpServerPatcher().shimmer()
+    if (options.httpClient) new HttpClientPatcher().shimmer()
+  }
+
+  registerKoaHooks (app, options: HookOptions = defaultOptions) {
+    new KoaServerPatcher(app, options).shimmer()
     if (options.httpClient) new HttpClientPatcher().shimmer()
   }
 

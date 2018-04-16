@@ -15,7 +15,7 @@ export interface IReport {
 export interface SpanData {
   name: string
   references: Array<{
-    refType: string;
+    refType?: string;
     traceId: string;
     spanId: string;
   }>
@@ -30,6 +30,11 @@ export interface SpanData {
 }
 
 export interface TraceData {
+  name: string
+  userId?: string
+  traceId: string
+  status: string
+  timestamp: number
   duration: number
   spans: Array<SpanData>
 }

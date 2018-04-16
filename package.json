@@ -63,6 +63,7 @@
   },
   "devDependencies": {
     "@types/jest": "^22.2.0",
+    "@types/lodash": "^4.14.107",
     "@types/mongoose": "^5.0.9",
     "@types/power-assert": "^1.4.29",
     "jest": "^22.4.2",

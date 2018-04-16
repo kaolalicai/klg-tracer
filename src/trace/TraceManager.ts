@@ -7,6 +7,9 @@ import * as uuid from 'uuid'
 
 const debug = require('debug')('Klg:Tracer:TraceManager')
 
+/**
+ * TODO 清理超时的 trace
+ */
 export class TraceManager {
   private static instance
   traceContainer = {}
