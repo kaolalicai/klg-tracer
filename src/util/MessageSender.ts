@@ -4,6 +4,7 @@ export class MessageSender {
 
   client: {
     on (msg: string, reply: (data?) => {}),
+    once (msg: string, reply: (data?) => {}),
     emit (messageKey: string, messageData: any)
   } = process
 
@@ -18,6 +19,10 @@ export class MessageSender {
 
   on (categoryKey, reply) {
     this.client.on(`${MessageSender.MESSAGE_KEY_PREFIX}${categoryKey}`, reply)
+  }
+
+  once (categoryKey, reply) {
+    this.client.once(`${MessageSender.MESSAGE_KEY_PREFIX}${categoryKey}`, reply)
   }
 }
 

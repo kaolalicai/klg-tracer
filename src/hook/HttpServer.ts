@@ -4,6 +4,7 @@ import {HEADER_TRACE_ID} from '../util/Constants'
 import {getRandom64} from '../util/TraceUtil'
 import {extractPath} from '../util/Utils'
 import {wrap} from '../trace/Shimmer'
+import {query} from './shimmers/http-server/QueryParser'
 import {createNamespace} from 'cls-hooked'
 
 export class HttpServerPatcher extends Patcher {
@@ -34,9 +35,13 @@ export class HttpServerPatcher extends Patcher {
         value: extractPath(req.url),
         type: 'string'
       },
-      'http.client': {
-        value: false,
-        type: 'bool'
+      'http.query': {
+        value: query(req),
+        type: 'object'
+      },
+      'http.body': {
+        value: query(req),
+        type: 'object'
       }
     }
   }
@@ -74,7 +79,6 @@ export class HttpServerPatcher extends Patcher {
 
   createTracer (req) {
     const traceId = this.getTraceId(req)
-
     return this.getTraceManager().create({traceId})
   }
 

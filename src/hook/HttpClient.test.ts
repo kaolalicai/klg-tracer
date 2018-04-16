@@ -43,7 +43,8 @@ describe('http client hook test', async function () {
   it(' test query ', async () => {
     new MessageSender().on(MessageConstants.TRACE, data => {
       console.log('data', data)
-      console.log('span 1', data.spans[1])
+      console.log('span 0', data.spans[0].tags)
+      console.log('span 1', data.spans[1].tags)
 
       expect(data.timestamp).toBeDefined()
       expect(data.duration).toBeDefined()
