@@ -4,11 +4,10 @@ import {HEADER_TRACE_ID, QUERY_TRACE_ID} from '../util/Constants'
 import {getRandom64} from '../util/TraceUtil'
 import {extractPath} from '../util/Utils'
 import {createNamespace} from 'cls-hooked'
-import * as Koa from 'koa'
 import * as bodyParser from 'koa-bodyparser'
 
 export class KoaServerPatcher extends Patcher {
-  app: Koa
+  app: any
 
   constructor (app, options = {}) {
     super(options)

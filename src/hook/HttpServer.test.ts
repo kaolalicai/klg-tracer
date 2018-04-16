@@ -1,13 +1,12 @@
 import {HttpServerPatcher} from './HttpServer'
 import * as http from 'http'
 import * as tracer from 'tracer'
-import {Request} from 'klg-request'
+import * as request from 'superagent'
 import {MessageConstants, MessageSender} from '../util/MessageSender'
 
 process.env.DEBUG = 'Klg:Tracer:*'
 
 const logger = tracer.console({})
-const request = new Request()
 describe('http server hook test', async function () {
   let server
 
@@ -30,14 +29,13 @@ describe('http server hook test', async function () {
       expect(data.traceId).toBeDefined()
       // expect(data.userId).toBeDefined()
     })
-    const result = await request.postJSON({
-      url: 'http://localhost:4005/',
+    const result = await request.post('http://localhost:4005/').send({
       userId: '1212',
       requestId: '123123',
       body: {msg: 'hello'}
     })
     expect.hasAssertions()
-    logger.info(result)
+    logger.info(result.text)
   })
 
   afterAll(done => {
