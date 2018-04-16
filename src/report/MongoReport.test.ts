@@ -11,6 +11,7 @@ describe('http client hook test', async function () {
     const tracers = reporter.transData(tracer)
 
     console.log('tracers', tracers)
+    console.log('tracers tags', tracers[0].tags)
     expect(tracers).toBeDefined()
     expect(tracers.length).toEqual(3)
   })

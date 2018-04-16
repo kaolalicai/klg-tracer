@@ -32,6 +32,7 @@ export class MongoReport implements IReport {
   transData (data: TraceData): Array<any> {
     let result = []
     for (let span of data.spans) {
+      const obj = cleanTags(span.tags)
       result.push({
         traceId: data.traceId,
         userI: data.traceId,
@@ -39,18 +40,27 @@ export class MongoReport implements IReport {
         timestamp: span.timestamp,
         duration: span.duration,
         tags: {
-          httpMethod: span.tags['http.method'],
-          hostname: span.tags['http.hostname'],
-          port: span.tags['http.port'],
-          response_size: span.tags['http.response_size'],
-          status_code: span.tags['http.status_code'],
-          url: span.tags['http.url'],
-          query: span.tags['http.query'],
-          body: span.tags['http.body'],
-          response: span.tags['http.response']
+          httpMethod: obj['http.method'],
+          hostname: obj['http.hostname'],
+          port: obj['http.port'],
+          response_size: obj['http.response_size'],
+          status_code: obj['http.status_code'],
+          url: obj['http.url'],
+          query: obj['http.query'],
+          body: obj['http.body'],
+          response: obj['http.response']
         }
       })
     }
+
+    function cleanTags (tags) {
+      const obj = {}
+      for (let key of Object.keys(tags)) {
+        obj[key] = tags[key].value
+      }
+      return obj
+    }
+
     return result
   }
 }
