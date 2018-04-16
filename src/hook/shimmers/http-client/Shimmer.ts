@@ -128,7 +128,9 @@ export class HttpClientShimmer {
       const bindRequestWrite = traceManager.bind(write)
 
       return function wrappedRequestWrite (this: ClientRequest, chunk, encoding) {
-        if (chunk && typeof(chunk) === 'string') {
+        const hasChunk = chunk && typeof(chunk) === 'string'
+        const isUtf8 = encoding === undefined || encoding === 'utl8' // default is utf8
+        if (hasChunk && isUtf8) {
           self.handleBody(span, chunk)
         }
         return bindRequestWrite.apply(this, arguments)
