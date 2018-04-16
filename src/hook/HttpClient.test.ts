@@ -1,5 +1,6 @@
 import {HttpClientPatcher} from './HttpClient'
 import {HttpServerPatcher} from './HttpServer'
+import {TraceManager} from '../trace/TraceManager'
 import * as http from 'http'
 import * as nock from 'nock'
 import * as request from 'superagent'
@@ -9,6 +10,7 @@ import {logger} from '../util/Logger'
 process.env.DEBUG = 'Klg:Tracer:*'
 
 describe('http client hook test', async function () {
+  let traceManager = TraceManager.getInstance()
   let server
   beforeAll(() => {
     new HttpServerPatcher().shimmer()
@@ -25,6 +27,9 @@ describe('http client hook test', async function () {
 
     server = http.createServer((req, res) => {
       res.writeHead(200, {'Content-Type': 'text/plain'})
+      const tracer = traceManager.getCurrentTracer()
+      tracer.getCurrentSpan()
+      // res.end(JSON.stringify({msg: 'hello'}))
       request.get('http://myapp.com').query({msg: 'hello'})
         .set('X-API-Key', 'foobar')
         .set('Accept', 'application/json')
@@ -38,7 +43,7 @@ describe('http client hook test', async function () {
   it(' test query ', async () => {
     new MessageSender().on(MessageConstants.TRACE, data => {
       console.log('data', data)
-      console.log('span', data.spans[0])
+      console.log('span 1', data.spans[1])
 
       expect(data.timestamp).toBeDefined()
       expect(data.duration).toBeDefined()
@@ -47,7 +52,7 @@ describe('http client hook test', async function () {
       // expect(data.userId).toBeDefined()
       expect(data.spans).toBeDefined()
       expect(data.spans.length).toEqual(2)
-      expect(data.spans[0].name).toEqual('http')
+      expect(data.spans[0].name).toEqual('http-server')
 
       const tags = data.spans[0].tags
       expect(tags['http.method']).toEqual({value: 'GET', type: 'string'})
@@ -57,7 +62,6 @@ describe('http client hook test', async function () {
     const res = await request.get('http://localhost:4005/hello').query({msg: 'hello', userId: '123123123'})
       .set('X-API-Key', 'foobar')
       .set('Accept', 'application/json')
-      .end()
 
     expect.hasAssertions()
     logger.info(res.body)
