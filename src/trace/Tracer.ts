@@ -123,7 +123,7 @@ export class Tracer extends (mixin(OpenTrancer, EventEmitter) as { new (): any }
   }
 
   setStatus (status) {
-    this.status = this.status | status
+    this.status = this.status || status
   }
 
   report (): TraceData {
@@ -136,16 +136,14 @@ export class Tracer extends (mixin(OpenTrancer, EventEmitter) as { new (): any }
         return span.toJSON()
       }),
       status: this.status
-    }
+    } as any
 
     for (let [key, value] of this.attrs.entries()) {
       const v = value.report()
-
       if (v !== false) {
         result[key] = v
       }
     }
-
     return result
   }
 
