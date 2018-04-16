@@ -57,23 +57,23 @@
     "xorshift": "^1.1.1"
   },
   "devDependencies": {
-    "@types/koa": "^2.0.45",
-    "@types/node": "^9.6.4",
     "@types/jest": "^22.2.0",
+    "@types/koa": "^2.0.45",
     "@types/mongoose": "^5.0.9",
+    "@types/node": "^9.6.4",
     "@types/superagent": "^3.5.8",
-    "superagent": "^3.8.2",
+    "jest": "^22.4.2",
     "koa": "^2.5.0",
     "koa-bodyparser": "^4.2.0",
-    "jest": "^22.4.2",
     "nock": "^9.2.5",
     "source-map-support": "^0.5.3",
+    "superagent": "^3.8.2",
+    "tracer": "^0.8.12",
     "ts-jest": "^22.4.2",
     "ts-node": "^5.0.1",
     "tslint": "^5.9.1",
     "tslint-config-klg": "^1.0.4",
-    "typescript": "^2.7.2",
-    "tracer": "^0.8.12",
+    "typescript": "^2.8.1",
     "webstorm-disable-index": "^1.2.0"
   }
 }

@@ -3,6 +3,7 @@ import {Patcher} from './Patcher'
 import {HEADER_TRACE_ID, QUERY_TRACE_ID} from '../util/Constants'
 import {getRandom64} from '../util/TraceUtil'
 import {extractPath} from '../util/Utils'
+import {Tracer} from '../trace/Tracer'
 import {createNamespace} from 'cls-hooked'
 import * as bodyParser from 'koa-bodyparser'
 
@@ -74,7 +75,7 @@ export class KoaServerPatcher extends Patcher {
     return false
   }
 
-  createTracer (request) {
+  createTracer (request): Tracer {
     const traceId = this.getTraceId(request)
     return this.getTraceManager().create({traceId})
   }

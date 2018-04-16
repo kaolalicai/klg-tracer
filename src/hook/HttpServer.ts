@@ -5,6 +5,7 @@ import {getRandom64} from '../util/TraceUtil'
 import {extractPath} from '../util/Utils'
 import {query} from '../util/QueryParser'
 import {wrap} from '../trace/Shimmer'
+import {Tracer} from '../trace/Tracer'
 import {createNamespace} from 'cls-hooked'
 
 export class HttpServerPatcher extends Patcher {
@@ -77,7 +78,7 @@ export class HttpServerPatcher extends Patcher {
     return false
   }
 
-  createTracer (req) {
+  createTracer (req): Tracer {
     const traceId = this.getTraceId(req)
     return this.getTraceManager().create({traceId})
   }
