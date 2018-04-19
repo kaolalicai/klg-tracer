@@ -2,7 +2,7 @@ import * as http from 'http'
 import {Patcher} from './Patcher'
 import {HEADER_TRACE_ID, QUERY_TRACE_ID} from '../util/Constants'
 import {getRandom64} from '../util/TraceUtil'
-import {extractPath} from '../util/Utils'
+import {extractPath, safeParse} from '../util/Utils'
 import {Tracer} from '../trace/Tracer'
 import {createNamespace} from 'cls-hooked'
 import * as bodyParser from 'koa-bodyparser'
@@ -57,7 +57,7 @@ export class KoaServerPatcher extends Patcher {
         type: typeof(ctx.status)
       },
       'http.response': {
-        value: ctx.body,
+        value: safeParse(ctx.body),
         type: typeof(ctx.body)
       }
     }

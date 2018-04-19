@@ -35,7 +35,7 @@ export class MongoReport implements IReport {
       const obj = cleanTags(span.tags)
       result.push({
         traceId: data.traceId,
-        userI: data.traceId,
+        userId: data.userId,
         name: span.name,
         timestamp: span.timestamp,
         duration: span.duration,

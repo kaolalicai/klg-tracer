@@ -3,7 +3,7 @@ import {tracer} from './MongoReport.test.data'
 
 process.env.DEBUG = 'Klg:Tracer:*'
 
-describe('http client hook test', async function () {
+describe('MongoReport test', async function () {
   it(' test transData ', async () => {
 
     jest.spyOn(MongoReport.prototype, 'initDb')
@@ -14,6 +14,9 @@ describe('http client hook test', async function () {
     console.log('tracers tags', tracers[0].tags)
     expect(tracers).toBeDefined()
     expect(tracers.length).toEqual(3)
+    expect(tracers[0].traceId).toBeDefined()
+    // expect(tracers[0].userId).toBeDefined()
+    expect(tracers[0].tags).toBeDefined()
   })
 
   it(' test report ', async () => {
