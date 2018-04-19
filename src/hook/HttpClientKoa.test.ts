@@ -7,8 +7,6 @@ import * as request from 'superagent'
 import {MessageConstants, MessageSender} from '../util/MessageSender'
 import {logger} from '../util/Logger'
 
-process.env.DEBUG = 'Klg:Tracer:*'
-
 describe('http client with koa hook test', async function () {
   let server
   let fakeResult = {

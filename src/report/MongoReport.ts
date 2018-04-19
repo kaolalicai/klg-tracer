@@ -4,6 +4,8 @@ import * as assert from 'assert'
 import {TracerCRUD} from 'klg-tracer-model'
 import {TraceData} from '../domain'
 
+const debug = require('debug')('Klg:Tracer:Report:MongoReport')
+
 export interface MongoReportOption {
   mongoUrl: string,
   collectionName?: string
@@ -31,6 +33,7 @@ export class MongoReport implements IReport {
 
   transData (data: TraceData): Array<any> {
     let result = []
+    debug('tracer result ', data)
     for (let span of data.spans) {
       const obj = cleanTags(span.tags)
       result.push({
