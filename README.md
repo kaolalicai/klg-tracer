@@ -12,3 +12,11 @@ $ npm i
 $ npm test
 ```
 
+## ChangeLog
+1.0.0
+- add http-server koa-server hook
+- add http-client hook
+- add mongo report
+
+1.0.3
+- http-client hook trace request parameters and response
