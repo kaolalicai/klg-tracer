@@ -44,6 +44,7 @@ traceService.registerKoaHooks(app, {
 ### Register in http server
 如果你没有使用 Koa，那么可以使用通用的 http 钩子，但是 tracer 将不会记录请求参数和返回内容这些 tags
 
+app.ts
 ```js
 const traceService = new TraceService()
 
@@ -54,6 +55,7 @@ traceService.registerHttpHooks()
 
 ### Store tracer data to mongodb
 
+app.ts
 ```js
 
 // persist tracer to mongodb, collection's name default is 'Tracer'
@@ -62,6 +64,44 @@ traceService.registerMongoReporter({
     collectionName: 'Tracer'
 })
 
+```
+
+启动你的 Web 服务并访问，相关的请求信息将会写入 Tracer 表中。
+
+Search:
+
+```js
+﻿db.Tracer.find({name : 'http-server'}).sort({_id : -1})
+```
+
+Result:
+
+```json
+{
+    "_id" : ObjectId("5ad99bd3f29cf14de64516b3"),
+    "tags" : {
+        "httpMethod" : "POST",
+        "url" : "/api/v1/account/register",
+        "body" : {
+            "userId" : "5527da927855af35354c39eb",
+            "userRole" : "INVESTOR"
+        },
+        "response" : {
+            "code" : 0,
+            "message" : "success",
+            "data" : {
+                "html" : "html"
+            }
+        }
+    },
+    "traceId" : "6e11fe95c2035a7a",
+    "name" : "http-server",
+    "timestamp" : 1524210643694.0,
+    "duration" : 152,
+    "createdAt" : ISODate("2018-04-20T07:50:43.874Z"),
+    "updatedAt" : ISODate("2018-04-20T07:50:43.874Z"),
+    "__v" : 0
+}
 ```
 
 ### Store tracer daa to web ui
