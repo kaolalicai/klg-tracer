@@ -3,6 +3,7 @@ import * as Koa from 'koa'
 import * as tracer from 'tracer'
 import * as request from 'superagent'
 import {MessageConstants, MessageSender} from '../util/MessageSender'
+import {Tracer} from '../trace/Tracer'
 import {KoaServerPatcher} from './KoaServer'
 
 process.env.DEBUG = 'Klg:Tracer:*'
@@ -13,7 +14,12 @@ describe('koa server hook test', async function () {
 
   beforeAll(done => {
     const app = new Koa()
-    new KoaServerPatcher(app).shimmer()
+    new KoaServerPatcher(app, {
+      interceptor: function (ctx, trace: Tracer) {
+        ctx.traceId = trace.traceId
+        ctx.userId = trace.traceId
+      }
+    }).shimmer()
     app.use(async (ctx, next) => {
       ctx.body = 'hello world'
     })

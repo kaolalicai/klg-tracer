@@ -14,10 +14,10 @@ export class KoaServerPatcher extends Patcher {
 
   constructor (app, options?: HookOptions) {
     super(options)
-    if (options.interceptor && !isFunction(options.interceptor)) {
-      throw new Error('KoaServer interceptor must be a function')
+    if (options && options.interceptor) {
+      this.interceptor = options.interceptor
+      if (!isFunction(options.interceptor)) throw new Error('KoaServer interceptor must be a function')
     }
-    this.interceptor = options.interceptor
     this.app = app
   }
 
@@ -87,7 +87,6 @@ export class KoaServerPatcher extends Patcher {
   shimmer () {
     const self = this
     const traceManager = this.getTraceManager()
-    this.app.use(bodyParser())
     this.app.use(traceManager.bind(async function (ctx, next) {
       if (self.requestFilter(ctx.request)) return await next()
 
@@ -100,7 +99,7 @@ export class KoaServerPatcher extends Patcher {
 
       tracer.named(`HTTP-${tags['http.method'].value}:${tags['http.url'].value}`)
       tracer.setCurrentSpan(span)
-      self.interceptor(ctx, tracer)
+      if (self.interceptor) self.interceptor(ctx, tracer)
 
       await next()
 
