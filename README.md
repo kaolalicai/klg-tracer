@@ -20,3 +20,7 @@ $ npm test
 
 1.0.3
 - http-client hook trace request parameters and response
+
+
+1.1.3
+- koa-server hook add intercept options
