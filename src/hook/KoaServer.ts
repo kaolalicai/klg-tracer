@@ -87,6 +87,7 @@ export class KoaServerPatcher extends Patcher {
   shimmer () {
     const self = this
     const traceManager = this.getTraceManager()
+    this.app.use(bodyParser())
     this.app.use(traceManager.bind(async function (ctx, next) {
       if (self.requestFilter(ctx.request)) return await next()
 

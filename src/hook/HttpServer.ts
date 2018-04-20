@@ -39,29 +39,12 @@ export class HttpServerPatcher extends Patcher {
       'http.query': {
         value: query(req),
         type: 'object'
-      },
-      'http.body': {
-        value: query(req),
-        type: 'object'
       }
     }
   }
 
   buildResponseTags (req) {
-    return {
-      'http.method': {
-        value: req.method.toUpperCase(),
-        type: 'string'
-      },
-      'http.url': {
-        value: extractPath(req.url),
-        type: 'string'
-      },
-      'http.client': {
-        value: false,
-        type: 'bool'
-      }
-    }
+    return {}
   }
 
   createSpan (tracer, tags) {
