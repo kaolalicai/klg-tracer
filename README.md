@@ -68,10 +68,6 @@ traceService.registerMongoReporter({
 
 TODO
 
-```js
-
-```
-
 ### Tracer tags
 
 1. koa server
@@ -105,6 +101,18 @@ TODO
 $ npm i
 $ npm test
 ```
+
+## How it works
+
+### tracer
+
+implements session with [async_hooks](https://nodejs.org/api/async_hooks.html) and [cls-hooked](https://github.com/Jeff-Lewis/cls-hooked)
+
+### hook
+
+serve : hack http createServer method, register listener.
+
+client : hack http request method, register listener.
 
 ## ChangeLog
 1.0.0
