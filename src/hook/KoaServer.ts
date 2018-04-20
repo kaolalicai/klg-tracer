@@ -12,7 +12,7 @@ export class KoaServerPatcher extends Patcher {
   app: any
   interceptor: Function
 
-  constructor (app, options: HookOptions) {
+  constructor (app, options?: HookOptions) {
     super(options)
     if (options.interceptor && !isFunction(options.interceptor)) {
       throw new Error('KoaServer interceptor must be a function')
