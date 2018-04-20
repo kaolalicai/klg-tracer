@@ -2,16 +2,22 @@ import * as http from 'http'
 import {Patcher} from './Patcher'
 import {HEADER_TRACE_ID, QUERY_TRACE_ID} from '../util/Constants'
 import {getRandom64} from '../util/TraceUtil'
-import {extractPath, safeParse} from '../util/Utils'
+import {extractPath, safeParse, isFunction} from '../util/Utils'
 import {Tracer} from '../trace/Tracer'
 import {createNamespace} from 'cls-hooked'
 import * as bodyParser from 'koa-bodyparser'
+import {HookOptions} from '../domain'
 
 export class KoaServerPatcher extends Patcher {
   app: any
+  interceptor: Function
 
-  constructor (app, options = {}) {
+  constructor (app, options: HookOptions) {
     super(options)
+    if (options.interceptor && !isFunction(options.interceptor)) {
+      throw new Error('KoaServer interceptor must be a function')
+    }
+    this.interceptor = options.interceptor
     this.app = app
   }
 
@@ -24,8 +30,6 @@ export class KoaServerPatcher extends Patcher {
   }
 
   getTraceId (request) {
-    const key1 = HEADER_TRACE_ID
-    const key2 = QUERY_TRACE_ID
     return request.headers[HEADER_TRACE_ID] || request.query[QUERY_TRACE_ID] || getRandom64()
   }
 
@@ -96,6 +100,7 @@ export class KoaServerPatcher extends Patcher {
 
       tracer.named(`HTTP-${tags['http.method'].value}:${tags['http.url'].value}`)
       tracer.setCurrentSpan(span)
+      self.interceptor(ctx, tracer)
 
       await next()
 

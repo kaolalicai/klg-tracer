@@ -44,3 +44,9 @@ export interface TracerReport {
 
   getValue ()
 }
+
+export interface HookOptions {
+  httpClient?: boolean,
+  slowThreshold?: boolean,
+  interceptor?: Function
+}

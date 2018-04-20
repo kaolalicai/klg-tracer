@@ -104,6 +104,12 @@ export class HttpClientShimmer {
     }
   }
 
+  dataTypeFilter (chunk, encoding) {
+    const hasChunk = chunk && typeof(chunk) === 'string'
+    const isUtf8 = encoding === undefined || encoding === 'utf8' // default is utf8
+    return (hasChunk && isUtf8)
+  }
+
   wrapRequest = (request, tracer, span) => {
     const traceManager = this.traceManager
     const shimmer = this.shimmer
@@ -128,14 +134,29 @@ export class HttpClientShimmer {
       const bindRequestWrite = traceManager.bind(write)
 
       return function wrappedRequestWrite (this: ClientRequest, chunk, encoding) {
-        const hasChunk = chunk && typeof(chunk) === 'string'
-        const isUtf8 = encoding === undefined || encoding === 'utl8' // default is utf8
-        if (hasChunk && isUtf8) {
+        if (self.dataTypeFilter(chunk, encoding)) {
           self.handleBody(span, chunk)
         }
         return bindRequestWrite.apply(this, arguments)
       }
     })
+
+    /**
+     * 结束发送请求。 如果部分请求主体还未被发送，则会刷新它们到流中。 如果请求是分块的，则会发送终止字符 '0\r\n\r\n'。
+     * 如果指定了 data，则相当于调用 request.write(data, encoding) 之后再调用 request.end(callback)。
+     * 见：http://nodejs.cn/api/http.html#http_request_end_data_encoding_callback
+     */
+    shimmer.wrap(request, 'end', function requestWriteWrapper (write) {
+      const bindRequestWrite = traceManager.bind(write)
+
+      return function wrappedRequestWrite (this: ClientRequest, data, encoding) {
+        if (self.dataTypeFilter(data, encoding)) {
+          self.handleBody(span, data)
+        }
+        return bindRequestWrite.apply(this, arguments)
+      }
+    })
+
   }
 
   handleBody (this: any, span, chunk) {
@@ -211,17 +232,14 @@ export class HttpClientShimmer {
       value: res.statusCode
     })
 
-    if (res && res.headers && res.headers['content-type'] === 'application/json') {
-      span.setTag('http.response', {
-        type: 'object',
-        value: safeParse(res.text)
-      })
+    let response = {text: (res.text && res.text.substring(0, 100))}
+    if (res && res.headers && res.headers['content-type'] && res.headers['content-type'].includes('application/json')) {
+      response = safeParse(res.text)
     }
-
-    // span.setTag('http.remote_ip', {
-    //   type: 'number',
-    //   value: remoteIp
-    // })
+    span.setTag('http.response', {
+      type: 'object',
+      value: response
+    })
 
     span.setTag('http.response_size', {
       type: 'number',

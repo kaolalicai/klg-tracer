@@ -53,3 +53,25 @@ export function nodeVersion (rule) {
 export function hasOwn (obj, key) {
   return Object.hasOwnProperty.call(obj, key)
 }
+
+export function isAsyncFunction (funktion) {
+  return funktion && {}.toString.call(funktion) === '[object AsyncFunction]'
+}
+
+export function isGeneratorFunction (funktion) {
+  const constructor = funktion.constructor
+
+  if (!constructor) {
+    return false
+  }
+
+  if ('GeneratorFunction' === constructor.name || 'GeneratorFunction' === constructor.displayName) {
+    return true
+  }
+
+  return 'function' === typeof constructor.prototype.next && 'function' === typeof constructor.prototype.throw
+}
+
+export function isFunction (funktion) {
+  return funktion && ({}.toString.call(funktion) === '[object Function]' || isGeneratorFunction(funktion) || isAsyncFunction(funktion))
+}

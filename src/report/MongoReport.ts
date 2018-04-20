@@ -48,7 +48,7 @@ export class MongoReport implements IReport {
           port: obj['http.port'],
           response_size: obj['http.response_size'],
           status_code: obj['http.status_code'],
-          url: obj['http.url'],
+          url: obj['http.url'] || obj['http.path'],
           query: obj['http.query'],
           body: obj['http.body'],
           response: obj['http.response']

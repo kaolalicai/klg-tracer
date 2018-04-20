@@ -1,26 +1,5 @@
 const debug = require('debug')('Pandora:Metrics:Shimmer')
-
-function isAsyncFunction (funktion) {
-  return funktion && {}.toString.call(funktion) === '[object AsyncFunction]'
-}
-
-function isGeneratorFunction (funktion) {
-  const constructor = funktion.constructor
-
-  if (!constructor) {
-    return false
-  }
-
-  if ('GeneratorFunction' === constructor.name || 'GeneratorFunction' === constructor.displayName) {
-    return true
-  }
-
-  return 'function' === typeof constructor.prototype.next && 'function' === typeof constructor.prototype.throw
-}
-
-function isFunction (funktion) {
-  return funktion && ({}.toString.call(funktion) === '[object Function]' || isGeneratorFunction(funktion) || isAsyncFunction(funktion))
-}
+import {isFunction} from '../util/Utils'
 
 // Default to complaining loudly when things don't go according to plan.
 let logger = debug
