@@ -11,12 +11,17 @@ import {HookOptions} from '../domain'
 export class KoaServerPatcher extends Patcher {
   app: any
   interceptor: Function
+  requestFilter: Function
 
   constructor (app, options?: HookOptions) {
     super(options)
     if (options && options.interceptor) {
       this.interceptor = options.interceptor
       if (!isFunction(options.interceptor)) throw new Error('KoaServer interceptor must be a function')
+    }
+    if (options && options.requestFilter) {
+      this.requestFilter = options.requestFilter
+      if (!isFunction(options.requestFilter)) throw new Error('KoaServer requestFilter must be a function')
     }
     this.app = app
   }
@@ -75,10 +80,6 @@ export class KoaServerPatcher extends Patcher {
     return span
   }
 
-  requestFilter (req) {
-    return false
-  }
-
   createTracer (request): Tracer {
     const traceId = this.getTraceId(request)
     return this.getTraceManager().create({traceId})
@@ -89,7 +90,7 @@ export class KoaServerPatcher extends Patcher {
     const traceManager = this.getTraceManager()
     this.app.use(bodyParser())
     this.app.use(traceManager.bind(async function (ctx, next) {
-      if (self.requestFilter(ctx.request)) return await next()
+      if (self.requestFilter && !self.requestFilter(ctx)) return await next()
 
       traceManager.bindEmitter(ctx.req)
       traceManager.bindEmitter(ctx.res)

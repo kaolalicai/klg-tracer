@@ -49,4 +49,5 @@ export interface HookOptions {
   httpClient?: boolean,
   slowThreshold?: boolean,
   interceptor?: Function
+  requestFilter?: Function
 }

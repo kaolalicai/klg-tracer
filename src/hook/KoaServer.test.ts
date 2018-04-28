@@ -15,6 +15,10 @@ describe('koa server hook test', async function () {
   beforeAll(done => {
     const app = new Koa()
     new KoaServerPatcher(app, {
+      requestFilter: function (ctx) {
+        const allow = ctx.url.match(/\/233/)
+        return Boolean(allow)
+      },
       interceptor: function (ctx, trace: Tracer) {
         ctx.traceId = trace.traceId
         ctx.userId = trace.traceId
@@ -78,6 +82,22 @@ describe('koa server hook test', async function () {
     })
     const result = await request.post('http://localhost:4005/233').send(body)
     expect.hasAssertions()
+    logger.info(result.text)
+  })
+
+  it(' test requestFilter  ', async () => {
+    const body = {
+      userId: '1212',
+      requestId: '123123',
+      body: {msg: 'hello'}
+    }
+    const spy = jest.fn()
+    const result = await request.post('http://localhost:4005/hello').send(body)
+    new MessageSender().once(MessageConstants.TRACE, data => {
+      spy()
+      console.log('data', data)
+    })
+    expect(spy).toHaveBeenCalledTimes(0)
     logger.info(result.text)
   })
 

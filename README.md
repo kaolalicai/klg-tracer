@@ -76,7 +76,7 @@ Search:
 
 Result:
 
-```json
+```js
 {
     "_id" : ObjectId("5ad99bd3f29cf14de64516b3"),
     "tags" : {
@@ -166,3 +166,6 @@ client : hack http request method, register listener.
 
 1.1.0
 - koa-server hook add intercept options
+
+1.2.0
+- koa-server hook add requestFilter options
