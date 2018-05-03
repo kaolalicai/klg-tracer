@@ -56,6 +56,7 @@
     "module-hook": "^2.1.0",
     "opentracing": "^0.14.3",
     "parseurl": "^1.3.2",
+    "sinon": "^5.0.3",
     "uuid": "^3.2.1",
     "xorshift": "^1.1.1"
   },
@@ -69,6 +70,7 @@
     "koa": "^2.5.0",
     "koa-bodyparser": "^4.2.0",
     "mongodb": "^3.0.4",
+    "mongoose": "^4.11.3",
     "nock": "^9.2.5",
     "source-map-support": "^0.5.3",
     "superagent": "^3.8.2",

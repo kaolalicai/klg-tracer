@@ -5,12 +5,6 @@ import * as mongodb from 'mongodb'
 
 new MongodbPatcher().run()
 
-import {hook} from 'module-hook'
-
-hook('mongodb', '>=2.2.x', (loadModule, replaceSource, version) => {
-  console.log('f w', version)
-})
-
 process.env.DEBUG = 'Klg:Tracer:*'
 
 describe('mongo hook test', async function () {

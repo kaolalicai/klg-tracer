@@ -30,7 +30,7 @@ export const DB_OPS = [
   'stats',
   '_executeInsertCommand',
   '_executeQueryCommand'
-];
+]
 
 export const COLLECTION_OPS = [
   'aggregate',
@@ -72,13 +72,13 @@ export const COLLECTION_OPS = [
   'update',
   'updateMany',
   'updateOne'
-];
+]
 
 export const GRID_OPS = [
   'put',
   'get',
   'delete'
-];
+]
 
 export const CURSOR_OPS = [
   'nextObject',
@@ -86,4 +86,4 @@ export const CURSOR_OPS = [
   'toArray',
   'count',
   'explain'
-];
+]
