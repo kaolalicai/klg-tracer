@@ -28,6 +28,11 @@ const traceService = new TraceService()
 
 // 注册钩子
 traceService.registerKoaHooks(app, {
+  // 过滤请求，只对特定 url 监听
+  requestFilter: function (ctx) {
+    const allow = ctx.url.match(/\/233/)
+    return Boolean(allow)
+  },
   // interceptor 的作用是方便业务方把 tracer 和实际业务关联起来，例如，可以把 traceId 写入 ctx
   // 把实际业务的的 userId 写入 trace，方便关联查询
   interceptor: function (ctx, trace: Tracer) {
