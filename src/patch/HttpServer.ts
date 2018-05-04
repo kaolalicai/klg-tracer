@@ -1,5 +1,4 @@
 import {HttpServerPatcher} from 'pandora-hook'
-import {query} from '../util/QueryParser'
 
 const origin = HttpServerPatcher.prototype.buildTags
 HttpServerPatcher.prototype.buildTags = function (req) {

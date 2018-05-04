@@ -4,12 +4,13 @@ import {KoaServerPatcher} from './patch/KoaServer'
 import {HttpClientPatcher} from './patch/HttpClient'
 // import {MongoReportOption, MongoReport} from './report/MongoReport'
 import {logger} from './util/Logger'
-import {HookOptions} from './domain'
+import {ServerHookOptions} from './domain'
 
 const defaultOptions = {httpClient: {enabled: true, options: {}}, mongodb: {enabled: true, options: {}}}
 
 export class TraceService {
-  registerHttpHooks (options: HookOptions = defaultOptions) {
+
+  registerHttpHooks (options: ServerHookOptions = defaultOptions) {
     _.defaults(options, defaultOptions)
     new HttpServerPatcher(options.httpServer).run()
     if (options.httpClient.enabled) new HttpClientPatcher(options.httpClient.options).run()

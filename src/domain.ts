@@ -46,13 +46,16 @@ export interface TracerReport {
 }
 
 export declare type requestFilter = (req) => boolean
-export declare type interceptor = (req) => void
+export declare type interceptor = (ctx, tracer) => void
 
-export interface HookOptions {
-  httpServer?: {
-    requestFilter?: requestFilter,
-    interceptor?: interceptor
-  },
+export interface ServerHookOptions {
+  app?: any,
+  requestFilter?: requestFilter,
+  interceptor?: interceptor
+}
+
+export interface ServerHookOptions {
+  httpServer?: ServerHookOptions,
   httpClient?: { enabled: boolean, options?: any },
   mongodb?: { enabled: boolean, options?: any }
 }

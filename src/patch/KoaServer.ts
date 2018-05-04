@@ -1,62 +1,39 @@
 import * as http from 'http'
-import {Patcher} from './Patcher'
 import {HEADER_TRACE_ID, QUERY_TRACE_ID} from '../util/Constants'
 import {getRandom64} from '../util/TraceUtil'
-import {extractPath, safeParse, isFunction} from '../util/Utils'
+import {safeParse, isFunction} from '../util/Utils'
 import {Tracer} from '../trace/Tracer'
 import {createNamespace} from 'cls-hooked'
 import * as bodyParser from 'koa-bodyparser'
-import {HookOptions} from '../domain'
+import {ServerHookOptions, interceptor} from '../domain'
 
-export class KoaServerPatcher extends Patcher {
-  app: any
-  interceptor: Function
-  requestFilter: Function
+import {HttpServerPatcher} from 'pandora-hook'
 
-  constructor (app, options?: HookOptions) {
+/**
+ * 简化实现，直接外部传入 app 对象
+ * TODO hack koa
+ */
+export class KoaServerPatcher extends HttpServerPatcher {
+  interceptor: interceptor
+
+  constructor (options?: ServerHookOptions) {
     super(options)
     if (options && options.interceptor) {
       this.interceptor = options.interceptor
       if (!isFunction(options.interceptor)) throw new Error('KoaServer interceptor must be a function')
     }
-    if (options && options.requestFilter) {
-      this.requestFilter = options.requestFilter
-      if (!isFunction(options.requestFilter)) throw new Error('KoaServer requestFilter must be a function')
-    }
-    this.app = app
-  }
-
-  getModule (): any {
-    return this.app
   }
 
   getModuleName (): string {
-    return 'koaServer'
+    return 'koa'
   }
 
   getTraceId (request) {
     return request.headers[HEADER_TRACE_ID] || request.query[QUERY_TRACE_ID] || getRandom64()
   }
 
-  buildRequestTags (request) {
-    return {
-      'http.method': {
-        value: request.method.toUpperCase(),
-        type: 'string'
-      },
-      'http.url': {
-        value: extractPath(request.url),
-        type: 'string'
-      },
-      'http.query': {
-        value: request.query,
-        type: 'object'
-      },
-      'http.body': {
-        value: request.body,
-        type: 'object'
-      }
-    }
+  buildRequestTags (ctx) {
+    return super.buildTags(ctx.req)
   }
 
   buildResponseTags (ctx) {
@@ -85,11 +62,11 @@ export class KoaServerPatcher extends Patcher {
     return this.getTraceManager().create({traceId})
   }
 
-  shimmer () {
+  shimmer (options) {
     const self = this
     const traceManager = this.getTraceManager()
-    this.app.use(bodyParser())
-    this.app.use(traceManager.bind(async function (ctx, next) {
+    options.app.use(bodyParser())
+    options.app.use(traceManager.bind(async function (ctx, next) {
       if (self.requestFilter && !self.requestFilter(ctx)) return await next()
 
       traceManager.bindEmitter(ctx.req)

@@ -44,4 +44,9 @@ describe('unit test', () => {
     })
   })
 
+  // describe('koa server', () => {
+  //   it('should normal trace record', done => {
+  //     fork('koa', done)
+  //   })
+  // })
 })
