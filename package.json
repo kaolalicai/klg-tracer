@@ -7,7 +7,7 @@
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts' --fix",
     "build": "tsc -d -p ./",
-    "test": "TS_NODE_CACHE=true mocha -t 100000",
+    "test": "DEBUG=PandoraHook:* TS_NODE_CACHE=true mocha -t 100000",
     "prepublishOnly": "npm run build"
   },
   "jest": {
@@ -53,6 +53,7 @@
     "klg-tracer-model": "^2.0.0",
     "mixin": "^0.2.0",
     "module-hook": "^2.1.0",
+    "mongoose": "^4.13.12",
     "opentracing": "^0.14.3",
     "pandora-hook": "^1.8.24",
     "pandora-metrics": "^1.8.18",
@@ -75,8 +76,7 @@
     "koa": "^2.5.0",
     "koa-bodyparser": "^4.2.0",
     "mocha": "^5.1.1",
-    "mongodb": "^3.0.4",
-    "mongoose": "^4.11.3",
+    "mongodb-mock-server": "^1.0.0",
     "nock": "^9.2.5",
     "nyc": "^11.7.1",
     "nyc-ts-patch": "^1.0.0",

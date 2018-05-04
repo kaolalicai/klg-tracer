@@ -1,7 +1,9 @@
 import * as mongoose from 'mongoose'
 import {Document, Model, Schema} from 'mongoose'
+(mongoose as any).Promise = Promise
+mongoose.set('debug', true)
 
-const db = mongoose.createConnection('mongodb://joda:27017/test')
+const db = mongoose.createConnection('mongodb://127.0.0.1:40001/test')
 
 db.on('connected', () => {
   console.log('enter connected')

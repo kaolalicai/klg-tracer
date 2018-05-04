@@ -1,19 +1,28 @@
 import * as _ from 'lodash'
 import {HttpServerPatcher} from './patch/HttpServer'
-import {KoaServerPatcher} from './patch/KoaServer'
+// import {KoaServerPatcher} from './patch/KoaServer'
 import {HttpClientPatcher} from './patch/HttpClient'
-// import {MongoReportOption, MongoReport} from './report/MongoReport'
-import {logger} from './util/Logger'
+import {MongodbPatcher} from './patch/Mongodb'
 import {ServerHookOptions} from './domain'
+import {EnvironmentUtil} from 'pandora-env'
+import {DefaultEnvironment} from './DefaultEnvironment'
 
 const defaultOptions = {httpClient: {enabled: true, options: {}}, mongodb: {enabled: true, options: {}}}
 
 export class TraceService {
+  constructor () {
+    this.setPandoraEnv()
+  }
+
+  setPandoraEnv () {
+    EnvironmentUtil.getInstance().setCurrentEnvironment(new DefaultEnvironment())
+  }
 
   registerHttpHooks (options: ServerHookOptions = defaultOptions) {
     _.defaults(options, defaultOptions)
     new HttpServerPatcher(options.httpServer).run()
     if (options.httpClient.enabled) new HttpClientPatcher(options.httpClient.options).run()
+    if (options.mongodb.enabled) new MongodbPatcher(options.mongodb.options).run()
   }
 
   // registerKoaHooks (app, options: HookOptions = defaultOptions) {

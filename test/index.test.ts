@@ -1,5 +1,6 @@
 const path = require('path')
 const childProcess = require('child_process')
+import * as MockMongoServer from 'mongodb-mock-server';
 
 const fork = function (name, done) {
   const filePath = require.resolve(path.join(__dirname, `fixtures/${name}`))
@@ -49,4 +50,38 @@ describe('unit test', () => {
   //     fork('koa', done)
   //   })
   // })
+
+  describe('mongoose', function () {
+    let server
+
+    before(() => {
+      MockMongoServer.createServer(40001).then(_server => {
+        server = _server
+
+        server.setMessageHandler(request => {
+          const doc = request.document
+          if (doc.ismaster) {
+            request.reply(MockMongoServer.DEFAULT_ISMASTER_36)
+          } else if (doc.insert) {
+            request.reply({ ok: 1, operationTime: Date.now() })
+          } else if (doc.find) {
+            request.reply({ ok: 1 })
+          } else if (doc.endSessions) {
+            request.reply({ ok: 1 })
+          }
+        })
+      })
+    })
+
+    // it('should mongodb work ok', done => {
+    //   fork('mongodb', done)
+    // })
+
+    it('should mongoose work ok', done => {
+      fork('mongoose', done)
+    })
+
+    after(() => MockMongoServer.cleanup())
+
+  })
 })
