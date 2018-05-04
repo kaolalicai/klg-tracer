@@ -45,9 +45,14 @@ export interface TracerReport {
   getValue ()
 }
 
+export declare type requestFilter = (req) => boolean
+export declare type interceptor = (req) => void
+
 export interface HookOptions {
-  httpClient?: boolean,
-  slowThreshold?: boolean,
-  interceptor?: Function
-  requestFilter?: Function
+  httpServer?: {
+    requestFilter?: requestFilter,
+    interceptor?: interceptor
+  },
+  httpClient?: { enabled: boolean, options?: any },
+  mongodb?: { enabled: boolean, options?: any }
 }

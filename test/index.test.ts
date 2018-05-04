@@ -24,6 +24,16 @@ const fork = function (name, done) {
 
 describe('unit test', () => {
 
+  describe('tracer service', () => {
+    it('should register http server ok', done => {
+      fork('tracer-service-http-register', done)
+    })
+
+    // it('should register http client ok', done => {
+    //   fork('http-record-query-and-data', done)
+    // })
+  })
+
   describe('http server', () => {
     it('should normal trace record', done => {
       fork('http', done)

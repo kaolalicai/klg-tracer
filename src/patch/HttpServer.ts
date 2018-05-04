@@ -8,4 +8,4 @@ HttpServerPatcher.prototype.buildTags = function (req) {
   console.log('tags', tags)
   return tags
 }
-export * from 'pandora-hook'
+export {HttpServerPatcher}
