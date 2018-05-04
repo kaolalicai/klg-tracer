@@ -1,7 +1,7 @@
 import {TraceService} from './TraceService'
-import {KoaServerPatcher} from './hook/KoaServer'
-import {HttpServerPatcher} from './hook/HttpServer'
-import {HttpClientPatcher} from './hook/HttpClient'
+import {KoaServerPatcher} from './patch/KoaServer'
+import {KlgHttpServerPatcher} from './patch/HttpServer'
+import {HttpClientPatcher} from './patch/HttpClient'
 
 jest.mock('./hook/KoaServer')
 jest.mock('./hook/HttpServer')
@@ -15,7 +15,7 @@ describe('TraceService test', async function () {
     traceService.registerHttpHooks()
     traceService.registerMongoReporter({mongoUrl: 'mongodb://joda:27017/beta'})
 
-    expect(HttpServerPatcher.prototype.shimmer).toHaveBeenCalled()
+    expect(KlgHttpServerPatcher.prototype.shimmer).toHaveBeenCalled()
     expect(HttpClientPatcher.prototype.shimmer).toHaveBeenCalled()
   })
 

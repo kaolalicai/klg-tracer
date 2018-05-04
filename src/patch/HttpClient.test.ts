@@ -1,5 +1,5 @@
 import {HttpClientPatcher} from './HttpClient'
-import {HttpServerPatcher} from './HttpServer'
+import {KlgHttpServerPatcher} from './HttpServer'
 import * as http from 'http'
 import * as nock from 'nock'
 import * as request from 'superagent'
@@ -17,7 +17,7 @@ describe('http client hook test', async function () {
     email: 'pedro.teixeira@gmail.com'
   }
   beforeAll(() => {
-    new HttpServerPatcher().shimmer()
+    new KlgHttpServerPatcher({})
     new HttpClientPatcher().shimmer()
 
     nock('http://myapp.com')
