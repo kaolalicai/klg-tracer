@@ -1,7 +1,5 @@
 export * from './patch/HttpServer'
 export * from './patch/HttpClient'
-export * from './patch/KoaServer'
-export * from './trace/TraceManager'
 export * from './trace/Tracer'
 export * from './domain'
 export * from './TraceService'

@@ -1,18 +1,19 @@
 import {RunUtil} from '../../RunUtil'
 import * as assert from 'assert'
 import {TraceService} from '../../../src/TraceService'
+
+new TraceService().registerHttpHooks({
+  httpClient: {
+    enabled: false
+  },
+  mongodb: {enabled: true}
+})
+
 import {User, db} from './UserModel'
 
 RunUtil.run(function (done) {
   const http = require('http')
   const urllib = require('urllib')
-
-  new TraceService().registerHttpHooks({
-    httpClient: {
-      enabled: false
-    },
-    mongodb: {enabled: true}
-  })
 
   process.on('PANDORA_PROCESS_MESSAGE_TRACE' as any, (report: any) => {
     assert(report)
@@ -33,8 +34,8 @@ RunUtil.run(function (done) {
       phone: '13244667766',
       realName: 'Nick'
     })
-    await user.save().then()
-    const fUser = await User.findOne({}).then()
+    await user.save()
+    const fUser = await User.findOne({})
     console.log('fUser', fUser)
     db.close()
   }

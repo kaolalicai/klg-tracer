@@ -1,3 +1,4 @@
 --require ts-node/register
 --require ./test/TestHelper.ts
+--require source-map-support/register
 test/**/*.test.ts

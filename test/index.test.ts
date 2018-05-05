@@ -7,7 +7,8 @@ const fork = function (name, done) {
   const worker = childProcess.fork(filePath, {
     env: {
       ...process.env,
-      NODE_ENV: 'test'
+      NODE_ENV: 'test',
+      DEBUG: 'PandoraHook:*'
     },
     execArgv: [
       '-r', 'ts-node/register',
