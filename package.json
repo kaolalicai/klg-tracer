@@ -46,7 +46,9 @@
   "dependencies": {
     "cls": "^0.1.5",
     "cls-hooked": "^4.2.2",
+    "cls-mongoose-shim": "0.0.4",
     "dorapan": "^1.0.5",
+    "fh-cls-mongoose": "^2.1.1",
     "http": "0.0.0",
     "is-type-of": "^1.2.0",
     "klg-logger": "^1.0.4",

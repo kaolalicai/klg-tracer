@@ -74,10 +74,6 @@ describe('unit test', () => {
       })
     })
 
-    // it('should mongodb work ok', done => {
-    //   fork('mongodb', done)
-    // })
-
     it('should mongoose work ok', done => {
       fork('mongoose', done)
     })

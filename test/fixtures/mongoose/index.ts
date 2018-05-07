@@ -17,8 +17,13 @@ RunUtil.run(function (done) {
 
   process.on('PANDORA_PROCESS_MESSAGE_TRACE' as any, (report: any) => {
     assert(report)
-    console.log('spans', report.spans)
-    assert(report.spans.length > 1)
+    // console.log('spans', report.spans)
+    console.log('tags', report.spans[1].tags)
+    console.log('tags', report.spans[2].tags)
+    console.log('tags', report.spans[3].tags)
+    console.log('tags', report.spans[4].tags)
+    console.log('tags', report.spans[5].tags)
+    assert(report.spans.length > 5)
     done()
   })
 
@@ -35,7 +40,7 @@ RunUtil.run(function (done) {
       realName: 'Nick'
     })
     await user.save()
-    const fUser = await User.findOne({})
+    const fUser = await User.findOne({}).then()
     console.log('fUser', fUser)
     db.close()
   }

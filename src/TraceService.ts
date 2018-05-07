@@ -1,11 +1,10 @@
 import * as _ from 'lodash'
 import {HttpServerPatcher} from './patch/HttpServer'
-// import {KoaServerPatcher} from './patch/KoaServer'
 import {HttpClientPatcher} from './patch/HttpClient'
 import {MongodbPatcher} from './patch/Mongodb'
 import {ServerHookOptions} from './domain'
 import {EnvironmentUtil} from 'pandora-env'
-import {DefaultEnvironment} from './DefaultEnvironment'
+import {DefaultEnvironment} from './mock/DefaultEnvironment'
 
 const defaultOptions = {httpClient: {enabled: true, options: {}}, mongodb: {enabled: true, options: {}}}
 

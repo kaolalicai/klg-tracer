@@ -1,13 +1,3 @@
-export interface IPatcher {
-
-  getShimmer ()
-
-  getTraceManager ()
-
-  getModuleName ()
-
-}
-
 export interface IReport {
   report (data: TraceData): void
 }

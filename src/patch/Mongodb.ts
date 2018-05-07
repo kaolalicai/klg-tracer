@@ -1,8 +1,7 @@
-import {MongodbPatcher} from 'pandora-hook'
+import {MongodbPatcher as PandoraMongodbPatcher} from 'pandora-hook'
 
-// const shimmer = MongodbPatcher.prototype.shimmer
-// MongodbPatcher.prototype.shimmer = function (options) {
-//   console.log('excute', 'mongo  shimmer')
-//   return shimmer(options)
-// }
-export {MongodbPatcher}
+export class MongodbPatcher extends PandoraMongodbPatcher {
+  constructor (options?) {
+    super(options)
+  }
+}
