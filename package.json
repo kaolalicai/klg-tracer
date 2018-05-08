@@ -1,12 +1,12 @@
 {
   "name": "klg-tracer",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "tracer log ",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts' --fix",
-    "build": "tsc -d -p ./",
+    "build": "rm -rf ./dist && tsc -d -p ./",
     "test": "DEBUG=PandoraHook:* TS_NODE_CACHE=true mocha -t 100000",
     "prepublishOnly": "npm run build"
   },

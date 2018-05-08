@@ -124,7 +124,7 @@ http-client : hack http request method, register listener.
 
 ## ChangeLog
 
-2.0.0
+3.0.0
 - 基于 Pandorajs 重做，目前只提供 http-server http-client mongo 三个位置的监听
 
 1.2.0

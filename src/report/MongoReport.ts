@@ -46,7 +46,7 @@ export class MongoReport implements IReport {
         tags: {
           httpMethod: tag['http.method'],
           hostname: tag['http.hostname'],
-          port: tag['http.path'],
+          port: tag['http.port'],
           response_size: tag['http.response_size'],
           status_code: tag['http.status_code'],
           url: tag['http.url'] || tag['http.path'],
