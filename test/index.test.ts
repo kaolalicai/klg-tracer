@@ -46,11 +46,11 @@ describe('unit test', () => {
     })
   })
 
-  // describe('koa server', () => {
-  //   it('should normal trace record', done => {
-  //     fork('koa', done)
-  //   })
-  // })
+  describe('reports', () => {
+    it('should mongo report work', done => {
+      fork('mongo-report', done)
+    })
+  })
 
   describe('mongoose', function () {
     let server
