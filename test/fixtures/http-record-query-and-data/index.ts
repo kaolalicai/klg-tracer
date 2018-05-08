@@ -1,8 +1,8 @@
 import {RunUtil} from '../../RunUtil'
 import * as assert from 'assert'
-import {HttpServerPatcher} from '../../../src/patch/HttpServer'
+import {KlgHttpServerPatcher} from '../../../src/patch/HttpServer'
 
-const httpServerPatcher = new HttpServerPatcher({
+const httpServerPatcher = new KlgHttpServerPatcher({
   recordGetParams: true,
   recordPostData: true
 })

@@ -1,9 +1,9 @@
 import * as MockMongoServer from 'mongodb-mock-server'
 import {MongodbPatcher} from '../src/patch/Mongodb'
 import * as assert from 'assert'
-import {HttpServerPatcher} from '../src/patch/HttpServer'
+import {KlgHttpServerPatcher} from '../src/patch/HttpServer'
 
-const httpServerPatcher = new HttpServerPatcher()
+const httpServerPatcher = new KlgHttpServerPatcher()
 const mongodbPatcher = new MongodbPatcher()
 
 describe('mongo test', () => {

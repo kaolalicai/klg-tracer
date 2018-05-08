@@ -1,14 +1,15 @@
 import {RunUtil} from '../../RunUtil'
 import * as assert from 'assert'
 import * as url from 'url'
-import {HttpServerPatcher} from '../../../src/patch/HttpServer'
+import {KlgHttpServerPatcher} from '../../../src/patch/HttpServer'
 import {NORMAL_TRACE} from 'pandora-metrics'
 
-HttpServerPatcher.prototype.requestFilter = function (req) {
-  const urlParsed = url.parse(req.url, true)
-  return urlParsed.pathname.indexOf('ignore') > -1
-}
-const httpServerPatcher = new HttpServerPatcher()
+const httpServerPatcher = new KlgHttpServerPatcher({
+  requestFilter: function (req) {
+    const urlParsed = url.parse(req.url, true)
+    return urlParsed.pathname.indexOf('ignore') > -1
+  }
+})
 
 RunUtil.run(function (done) {
   httpServerPatcher.run()
@@ -19,6 +20,7 @@ RunUtil.run(function (done) {
     assert(report.name === 'HTTP-GET:/')
     assert(report.spans.length > 0)
     assert(report.status === NORMAL_TRACE)
+    console.log('spans', report.spans)
     const span = report.spans[0]
     const tag = span.tags['http.aborted']
     assert(!tag.value)
@@ -27,7 +29,6 @@ RunUtil.run(function (done) {
   })
 
   const server = http.createServer((req, res) => {
-
     res.end('hello')
   })
 

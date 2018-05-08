@@ -1,8 +1,12 @@
 import {HttpServerPatcher} from 'pandora-hook'
 
-const origin = HttpServerPatcher.prototype.buildTags
-HttpServerPatcher.prototype.buildTags = function (req) {
-  const tags = origin(req)
-  return tags
+export class KlgHttpServerPatcher extends HttpServerPatcher {
+  constructor (options?) {
+    super(options)
+  }
+
+  buildTags (req) {
+    const tags = super.buildTags(req)
+    return tags
+  }
 }
-export {HttpServerPatcher}
