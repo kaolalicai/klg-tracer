@@ -1,67 +1,36 @@
 # klg-tracer
 
-fork from pandora-metrics and pandora-hook，there are a part of [pandora](https://github.com/midwayjs/pandora)
+链路追踪工具，base on [pandora](https://github.com/midwayjs/pandora)
+
 ## Installation
 
 ```bash
 npm install klg-tracer
 ```
+
 Node.js >= 8.2.1 required.
 
 ## Features
 
-Provide Metrics and Standard OpenTracing Implementation
-
-提供基于 OpenTracing 标准的链路追踪信息
+Pandora 提供基于 OpenTracing 标准的链路追踪信息，在此基础上，klg-tracer 自定义了一些 tags，并支持将 tracer 信息写入 mongo。
 
 ## QuickStart
 
-### Register in koa server
+### 配合 Pandora 使用，纯粹拓展 tags
+
+TODO
+1. export 拓展好的类
+2. 覆盖 Pandora 的默认配置
+
+### 将 tracer 结果写入 Mongo
 
 app.ts
 ```js
 import {TraceService, Tracer} from 'klg-tracer'
-
-// 不能放在 koa-router 后面，不然会导致 hook 失效，原因未知
-// can't not behind the koa-router
 const traceService = new TraceService()
 
 // 注册钩子
-traceService.registerKoaHooks(app, {
-  // 过滤请求，只对特定 url 监听
-  requestFilter: function (ctx) {
-    const allow = ctx.url.match(/\/233/)
-    return Boolean(allow)
-  },
-  // interceptor 的作用是方便业务方把 tracer 和实际业务关联起来，例如，可以把 traceId 写入 ctx
-  // 把实际业务的的 userId 写入 trace，方便关联查询
-  interceptor: function (ctx, trace: Tracer) {
-    ctx.traceId = trace.traceId
-    const params = {} as any
-    Object.assign(params, ctx.request.body, ctx.request.query, ctx.params)
-    const userId = params.userId || ''
-    trace.setAttr('userId', userId)
-  }
-})
-
-```
-
-### Register in http server
-如果你没有使用 Koa，那么可以使用通用的 http 钩子，但是 tracer 将不会记录请求参数和返回内容这些 tags
-
-app.ts
-```js
-const traceService = new TraceService()
-
-// 注册钩子
-traceService.registerHttpHooks()
-
-```
-
-### Store tracer data to mongodb
-
-app.ts
-```js
+traceService.registerHooks()
 
 // persist tracer to mongodb, collection's name default is 'Tracer'
 traceService.registerMongoReporter({
@@ -70,6 +39,7 @@ traceService.registerMongoReporter({
 })
 
 ```
+
 
 启动你的 Web 服务并访问，相关的请求信息将会写入 Tracer 表中。
 
@@ -87,7 +57,7 @@ Result:
     "tags" : {
         "httpMethod" : "POST",
         "url" : "/api/v1/account/register",
-        "body" : {
+        "data" : {
             "userId" : "5527da927855af35354c39eb",
             "userRole" : "INVESTOR"
         },
@@ -109,36 +79,29 @@ Result:
 }
 ```
 
-### Store tracer daa to web ui
-
-TODO
-
 ### Tracer tags
 
-1. koa server
+1. http server
 - http.method
-- http.url  // path
-- http.query  // query string
-- http.body  // post body, only json
-- http.status
+- http.path  // path
+- http.query    // query string
+- http.data  // post body, only json
 - http.response
 
-2. http server
-- http.method
-- http.url  // path
-- http.query
-
-3. http client
+2. http client
 - http.method
 - http.url  // path
 - http.hostname  // send to where
 - http.port
 - http.query
-- http.body
+- http.data
 - http.response
 - http.response_size
 - http.status_code
 - http.error_code
+
+3. mongo
+todo
 
 ## Test
 
@@ -157,20 +120,42 @@ implements session with [async_hooks](https://nodejs.org/api/async_hooks.html) a
 
 serve : hack http createServer method, register listener.
 
-client : hack http request method, register listener.
+http-client : hack http request method, register listener.
 
 ## ChangeLog
+
+2.0.0
+- 基于 Pandorajs 重做，目前只提供 http-server http-client mongo 三个位置的监听
+
+1.2.0
+- koa-server hook add requestFilter options
+
+1.1.0
+- koa-server hook add intercept options
+
+1.0.3
+- http-client hook trace request parameters and response
+
 1.0.0
 - add http-server koa-server hook
 - add http-client hook
 - add mongo report
 
-1.0.3
-- http-client hook trace request parameters and response
+## 常见问题
+1 thenable 函数会 break cls 的上下文，像 mongoose 和 superagent 都是在 prototype 里添加 then function 来支持 Promise 的，所有都会有这个问题。
+目前只能通过改变写法来避免这个问题，例如：
 
+break session
+```js
+await User.findOne({})
+```
 
-1.1.0
-- koa-server hook add intercept options
+work
+```js
+await User.findOne({}).then()
+```
 
-1.2.0
-- koa-server hook add requestFilter options
+详情见此 issue https://github.com/midwayjs/pandora/issues/221
+
+2 mongodb nodejs driver 3.0 版本升级了 apm 的实现，Pandorajs 还未支持
+详情见此 issue https://github.com/midwayjs/pandora/issues/239
