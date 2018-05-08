@@ -5,6 +5,8 @@ import {MongodbPatcher} from './patch/Mongodb'
 import {ServerHookOptions} from './domain'
 import {EnvironmentUtil} from 'pandora-env'
 import {DefaultEnvironment} from './mock/DefaultEnvironment'
+import {logger} from './util/Logger'
+import {MongoReport, MongoReportOption} from './report/MongoReport'
 
 const defaultOptions = {
   httpServer: {
@@ -39,5 +41,16 @@ export class TraceService {
     new KlgHttpServerPatcher(options.httpServer).run()
     if (options.httpClient.enabled) new KlgHttpClientPatcher(options.httpClient.options).run()
     if (options.mongodb.enabled) new MongodbPatcher(options.mongodb.options).run()
+  }
+
+  registerMongoReporter (options: MongoReportOption) {
+    const mongo = new MongoReport(options)
+    process.on('PANDORA_PROCESS_MESSAGE_TRACE' as any, (tracer: any) => {
+      mongo.report(tracer).then(result => {
+        // empty
+      }).catch(err => {
+        logger.err('save mongo report err', err)
+      })
+    })
   }
 }
