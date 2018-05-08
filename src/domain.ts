@@ -39,7 +39,9 @@ export declare type requestFilter = (req) => boolean
 export declare type interceptor = (ctx, tracer) => void
 
 export interface ServerHookOptions {
-  app?: any,
+  recordGetParams?: boolean,
+  recordPostData?: boolean,
+  recordResponse?: boolean,
   requestFilter?: requestFilter,
   interceptor?: interceptor
 }

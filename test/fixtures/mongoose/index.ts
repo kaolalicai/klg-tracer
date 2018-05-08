@@ -2,7 +2,7 @@ import {RunUtil} from '../../RunUtil'
 import * as assert from 'assert'
 import {TraceService} from '../../../src/TraceService'
 
-new TraceService().registerHttpHooks({
+new TraceService().registerHooks({
   httpClient: {
     enabled: false
   },

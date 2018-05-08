@@ -2,14 +2,14 @@ import * as sinon from 'sinon'
 import {RunUtil} from '../../RunUtil'
 import {TraceService} from '../../../src/TraceService'
 import {KlgHttpServerPatcher} from '../../../src/patch/HttpServer'
-import {HttpClientPatcher} from '../../../src/patch/HttpClient'
+import {KlgHttpClientPatcher} from '../../../src/patch/HttpClient'
 
 const assert = require('assert')
 
 RunUtil.run(function (done) {
   const serverRunSpy = sinon.spy(KlgHttpServerPatcher.prototype, 'run')
-  const clinetRunSpy = sinon.spy(HttpClientPatcher.prototype, 'run')
-  new TraceService().registerHttpHooks({
+  const clientRunSpy = sinon.spy(KlgHttpClientPatcher.prototype, 'run')
+  new TraceService().registerHooks({
     httpServer: {
       requestFilter: function (req) {
         return true
@@ -20,6 +20,6 @@ RunUtil.run(function (done) {
     }
   })
   assert(serverRunSpy.callCount === 1)
-  assert(clinetRunSpy.callCount === 0)
+  assert(clientRunSpy.callCount === 0)
   done()
 })
