@@ -1,6 +1,6 @@
 const path = require('path')
 const childProcess = require('child_process')
-import * as MockMongoServer from 'mongodb-mock-server';
+import * as MockMongoServer from 'mongodb-mock-server'
 
 const fork = function (name, done) {
   const filePath = require.resolve(path.join(__dirname, `fixtures/${name}`))
@@ -30,10 +30,6 @@ describe('unit test', () => {
     it('should register http server ok', done => {
       fork('tracer-service-http-register', done)
     })
-
-    // it('should register http client ok', done => {
-    //   fork('http-record-query-and-data', done)
-    // })
   })
 
   describe('http server', () => {
@@ -43,6 +39,17 @@ describe('unit test', () => {
 
     it('should record http post data and query params', done => {
       fork('http-record-query-and-data', done)
+    })
+  })
+
+  describe('http client', () => {
+
+    // it('should urllib work ok', done => {
+    //   fork('urllib', done)
+    // })
+
+    it('should record response data', done => {
+      fork('http-client-record-response', done)
     })
   })
 
@@ -64,11 +71,11 @@ describe('unit test', () => {
           if (doc.ismaster) {
             request.reply(MockMongoServer.DEFAULT_ISMASTER_36)
           } else if (doc.insert) {
-            request.reply({ ok: 1, operationTime: Date.now() })
+            request.reply({ok: 1, operationTime: Date.now()})
           } else if (doc.find) {
-            request.reply({ ok: 1 })
+            request.reply({ok: 1})
           } else if (doc.endSessions) {
-            request.reply({ ok: 1 })
+            request.reply({ok: 1})
           }
         })
       })

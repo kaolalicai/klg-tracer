@@ -1,2 +1,7 @@
 import {HttpClientPatcher} from 'pandora-hook'
-export {HttpClientPatcher}
+
+export class KlgHttpClientPatcher extends HttpClientPatcher {
+  constructor (options?) {
+    super(options)
+  }
+}

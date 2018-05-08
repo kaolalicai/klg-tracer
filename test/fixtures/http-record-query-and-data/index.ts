@@ -13,6 +13,7 @@ RunUtil.run(function (done) {
   const urllib = require('urllib')
 
   process.on('PANDORA_PROCESS_MESSAGE_TRACE' as any, (report: any) => {
+    console.log('report', JSON.stringify(report))
     assert(report.name === 'HTTP-POST:/')
     assert(report.spans.length === 1)
     const logs = report.spans[0].logs

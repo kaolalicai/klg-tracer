@@ -13,7 +13,7 @@ export interface SpanData {
   timestamp: number
   duration: number
   logs: Array<{
-    timestamp: string;
+    timestamp: number;
     fields: any;
   }>
   tags: object
@@ -23,7 +23,7 @@ export interface TraceData {
   name: string
   userId?: string
   traceId: string
-  status: string
+  status: number
   timestamp: number
   duration: number
   spans: Array<SpanData>

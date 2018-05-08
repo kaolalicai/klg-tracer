@@ -1,64 +1,43 @@
 export const tracer = {
-  'timestamp': 1523863489204,
-  'duration': 15,
+  'timestamp': 1525750246863,
+  'duration': 13,
   'spans': [{
-    'name': 'http-server',
-    'timestamp': 1523863489205,
-    'duration': 14,
-    'context': {'traceId': '39560052a08deeb6', 'spanId': '87f7570d0e9edc64'},
+    'name': 'http',
+    'timestamp': 1525750246864,
+    'duration': 12,
+    'context': {'traceId': '89c22e119bf1700d', 'spanId': '79cb683f5da95a39'},
     'references': [],
     'tags': {
       'http.method': {'value': 'GET', 'type': 'string'},
-      'http.url': {'value': '/hello', 'type': 'string'},
-      'http.query': {'value': {'msg': 'hello', 'userId': '123123123'}, 'type': 'object'},
-      'http.body': {'value': {'msg': 'hello', 'userId': '123123123'}, 'type': 'object'}
+      'http.url': {'value': '/', 'type': 'string'},
+      'http.client': {'value': false, 'type': 'bool'},
+      'http.aborted': {'type': 'bool', 'value': false},
+      'http.status_code': {'type': 'number', 'value': 200}
     },
-    'logs': []
+    'logs': [{
+      'fields': [{'key': 'query', 'value': {'aaa': 'test'}}, {'key': 'data', 'value': {'bbb': 'data'}}],
+      'timestamp': 1525750246865
+    }]
   }, {
     'name': 'http-client',
-    'timestamp': 1523863489207,
+    'timestamp': 1525750246866,
     'duration': 8,
-    'context': {'traceId': '39560052a08deeb6', 'parentId': '87f7570d0e9edc64', 'spanId': '31e09f987bb89515'},
-    'references': [{'traceId': '39560052a08deeb6', 'spanId': '87f7570d0e9edc64'}],
+    'context': {'traceId': '89c22e119bf1700d', 'parentId': '79cb683f5da95a39', 'spanId': 'e6620a195d4ff431'},
+    'references': [{'traceId': '89c22e119bf1700d', 'spanId': '79cb683f5da95a39'}],
     'tags': {
-      'http.query': {'value': {'msg': 'hello'}, 'type': 'object'},
+      'http.client': {'value': true, 'type': 'bool'},
       'http.method': {'value': 'GET', 'type': 'string'},
-      'http.hostname': {'value': 'myapp.com', 'type': 'string'},
-      'http.port': {'value': 80, 'type': 'number'},
-      'http.path': {'value': '/?msg=hello', 'type': 'string'},
+      'http.hostname': {'value': 'www.taobao.com', 'type': 'string'},
+      'http.port': {'value': 443, 'type': 'string'},
+      'http.path': {'value': '/?name=test', 'type': 'string'},
       'error': {'type': 'bool', 'value': false},
       'http.status_code': {'type': 'number', 'value': 200},
-      'http.response': {
-        'type': 'object',
-        'value': {'_id': '123ABC', '_rev': '946B7D1C', 'username': 'pgte', 'email': 'pedro.teixeira@gmail.com'}
-      },
-      'http.response_size': {'type': 'number', 'value': 4}
+      'http.remote_ip': {'type': 'number', 'value': ''},
+      'http.response_size': {'type': 'number', 'value': 21}
     },
-    'logs': []
-  }, {
-    'name': 'http-client',
-    'timestamp': 1523863489217,
-    'duration': 1,
-    'context': {'traceId': '39560052a08deeb6', 'parentId': '31e09f987bb89515', 'spanId': '357274cb85d8e3bc'},
-    'references': [{'traceId': '39560052a08deeb6', 'parentId': '87f7570d0e9edc64', 'spanId': '31e09f987bb89515'}],
-    'tags': {
-      'http.query': {'value': {}, 'type': 'object'},
-      'http.method': {'value': 'POST', 'type': 'string'},
-      'http.hostname': {'value': 'myapp.com', 'type': 'string'},
-      'http.port': {'value': 80, 'type': 'number'},
-      'http.path': {'value': '/', 'type': 'string'},
-      'http.body': {'value': {'msg': 'hello'}, 'type': 'object'},
-      'error': {'type': 'bool', 'value': false},
-      'http.status_code': {'type': 'number', 'value': 200},
-      'http.response': {
-        'type': 'object',
-        'value': {'_id': '123ABC', '_rev': '946B7D1C', 'username': 'pgte', 'email': 'pedro.teixeira@gmail.com'}
-      },
-      'http.response_size': {'type': 'number', 'value': 4}
-    },
-    'logs': []
+    'logs': [{'fields': [{'key': 'response', 'value': 'Response from TaoBao.'}], 'timestamp': 1525750246874}]
   }],
-  'status': 'normal',
-  'traceId': '39560052a08deeb6',
-  'name': 'HTTP-GET:/hello'
+  'status': 1,
+  'traceId': '89c22e119bf1700d',
+  'name': 'HTTP-GET:/'
 }

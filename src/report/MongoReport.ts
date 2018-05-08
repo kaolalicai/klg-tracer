@@ -2,7 +2,7 @@ import {IReport} from '../domain'
 import * as mongoose from 'mongoose'
 import * as assert from 'assert'
 import {TracerCRUD} from 'klg-tracer-model'
-import {TraceData} from '../domain'
+import {TraceData, SpanData} from '../domain'
 
 const debug = require('debug')('Klg:Tracer:Report:MongoReport')
 
@@ -35,7 +35,8 @@ export class MongoReport implements IReport {
     let result = []
     debug('tracer result ', data)
     for (let span of data.spans) {
-      const obj = cleanTags(span.tags)
+      const tag = cleanTags(span.tags)
+      const log = cleanLogs(span.logs)
       result.push({
         traceId: data.traceId,
         userId: data.userId,
@@ -43,15 +44,15 @@ export class MongoReport implements IReport {
         timestamp: span.timestamp,
         duration: span.duration,
         tags: {
-          httpMethod: obj['http.method'],
-          hostname: obj['http.hostname'],
-          port: obj['http.port'],
-          response_size: obj['http.response_size'],
-          status_code: obj['http.status_code'],
-          url: obj['http.url'] || obj['http.path'],
-          query: obj['http.query'],
-          body: obj['http.body'],
-          response: obj['http.response']
+          httpMethod: tag['http.method'],
+          hostname: tag['http.hostname'],
+          port: tag['http.path'],
+          response_size: tag['http.response_size'],
+          status_code: tag['http.status_code'],
+          url: tag['http.url'] || tag['http.path'],
+          query: log['query'],
+          body: log['data'],
+          response: log['response']
         }
       })
     }
@@ -60,6 +61,16 @@ export class MongoReport implements IReport {
       const obj = {}
       for (let key of Object.keys(tags)) {
         obj[key] = tags[key].value
+      }
+      return obj
+    }
+
+    function cleanLogs (logs) {
+      const obj = {}
+      for (let log of logs) {
+        for (let field of log.fields) {
+          obj[field.key] = field.value
+        }
       }
       return obj
     }

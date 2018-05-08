@@ -13,8 +13,7 @@ RunUtil.run(function (done) {
   console.log('tracers', tracers)
   console.log('tracers tags', tracers[0].tags)
   assert(tracers !== undefined)
-  assert(tracers.length === 3)
-  assert(tracers.length === 3)
+  assert(tracers.length === 2)
   assert(tracers[0].traceId)
   assert(tracers[0].tags)
   assert(spy1.calledOnce)
@@ -29,7 +28,7 @@ RunUtil.run(function (done) {
     assert(spySave.calledOnce)
     const args = spySave.getCall(0).args[0]
     console.log('args', args)
-    assert(args.length === 3)
+    assert(args.length === 2)
     done()
   }).catch(done)
 
