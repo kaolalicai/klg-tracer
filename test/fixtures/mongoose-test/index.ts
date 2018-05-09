@@ -8,7 +8,8 @@ new TraceService().registerHooks({
   },
   mongodb: {enabled: true}
 })
-
+// 必须require mongodb 来触发hook，必须require mongoose 无效~
+require('mongodb')
 import {User, db} from './UserModel'
 
 RunUtil.run(function (done) {
@@ -17,7 +18,7 @@ RunUtil.run(function (done) {
 
   process.on('PANDORA_PROCESS_MESSAGE_TRACE' as any, (report: any) => {
     assert(report)
-    // console.log('spans', report.spans)
+    console.log('spans', report.spans)
     console.log('tags', report.spans[1].tags)
     console.log('tags', report.spans[2].tags)
     console.log('tags', report.spans[3].tags)

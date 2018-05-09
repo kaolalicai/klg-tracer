@@ -57,7 +57,7 @@ describe('unit test', () => {
   describe('mongoose', function () {
     let server
 
-    before(() => {
+    before((done) => {
       MockMongoServer.createServer(40001).then(_server => {
         server = _server
 
@@ -73,11 +73,12 @@ describe('unit test', () => {
             request.reply({ok: 1})
           }
         })
+        done()
       })
     })
 
     it('should mongoose work ok', done => {
-      fork('mongoose', done)
+      fork('mongoose-test', done)
     })
 
     after(() => MockMongoServer.cleanup())

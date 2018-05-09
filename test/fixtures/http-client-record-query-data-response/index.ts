@@ -79,6 +79,6 @@ RunUtil.run(function (done) {
           age: 100
         }
       })
-    }, 1000)
+    }, 500)
   })
 })
