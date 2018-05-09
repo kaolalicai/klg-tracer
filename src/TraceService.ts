@@ -41,6 +41,7 @@ export class TraceService {
     new KlgHttpServerPatcher(options.httpServer).run()
     if (options.httpClient.enabled) new KlgHttpClientPatcher(options.httpClient.options).run()
     if (options.mongodb.enabled) new MongodbPatcher(options.mongodb.options).run()
+    return this
   }
 
   registerMongoReporter (options: MongoReportOption) {

@@ -28,7 +28,7 @@ describe('unit test', () => {
 
   describe('tracer service', () => {
     it('should register http server ok', done => {
-      fork('tracer-service-http-register', done)
+      fork('tracer-service-register-and-report', done)
     })
   })
 
