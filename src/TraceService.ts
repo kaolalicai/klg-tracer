@@ -7,6 +7,7 @@ import {EnvironmentUtil} from 'pandora-env'
 import {DefaultEnvironment} from './mock/DefaultEnvironment'
 import {logger} from './util/Logger'
 import {MongoReport, MongoReportOption} from './report/MongoReport'
+const debug = require('debug')('Klg:Tracer:TraceService')
 
 const defaultOptions = {
   httpServer: {
@@ -37,7 +38,8 @@ export class TraceService {
   }
 
   registerHooks (options: ServerHookOptions = defaultOptions) {
-    _.defaults(options, defaultOptions)
+    _.defaultsDeep(options, defaultOptions)
+    debug('options:', options)
     new KlgHttpServerPatcher(options.httpServer).run()
     if (options.httpClient.enabled) new KlgHttpClientPatcher(options.httpClient.options).run()
     if (options.mongodb.enabled) new MongodbPatcher(options.mongodb.options).run()
