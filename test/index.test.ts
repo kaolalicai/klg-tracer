@@ -37,13 +37,13 @@ describe('unit test', () => {
       fork('http', done)
     })
 
-    it('should record http post data and query params', done => {
+    it('should record http post data and query params and  response data', done => {
       fork('http-server-record-query-and-data-response', done)
     })
   })
 
   describe('http client', () => {
-    it('should record response data', done => {
+    it('should record post data and query params and response data', done => {
       fork('http-client-record-query-data-response', done)
     })
   })

@@ -29,11 +29,17 @@ RunUtil.run(function (done) {
     // client
     const logs = report.spans[1].logs
     console.log('logs', logs)
-    assert(logs.length === 3)
 
     const getFields = logs[0].fields
+    console.log('getFields', getFields)
+
     const postFields = logs[1].fields
+    console.log('postFields', postFields)
+
     const responseFields = logs[2].fields
+    console.log('responseFields', responseFields)
+
+    assert(logs.length === 3)
 
     assert(getFields[0].key === 'query')
     assert.deepEqual(getFields[0].value, {name: 'abb'})

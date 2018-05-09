@@ -21,11 +21,10 @@ export class KlgHttpServerPatcher extends HttpServerPatcher {
     // 为了记录 response 参数 见 http://nodejs.cn/api/http.html#http_response_end_data_encoding_callback
     shimmer.wrap(response, 'write', function responseWriteWrapper (write) {
       const bindRequestWrite = traceManager.bind(write)
-      console.log('==== write wrapResponse')
       return function wrappedResponseWrite (chunk, encoding, callback) {
         if (contentTypeFilter(response)) {
           if (dataTypeFilter(chunk, encoding)) {
-            handleBody(span, chunk)
+            handleResponse(span, chunk)
           }
         }
         return bindRequestWrite.apply(this, arguments)
@@ -34,13 +33,10 @@ export class KlgHttpServerPatcher extends HttpServerPatcher {
 
     shimmer.wrap(response, 'end', function responseWriteWrapper (write) {
       const bindRequestWrite = traceManager.bind(write)
-      console.log('==== end wrapResponse')
       return function wrappedResponseWrite (chunk, encoding, callback) {
-        console.log('end contentTypeFilter', contentTypeFilter(response))
-        console.log('end dataTypeFilter', dataTypeFilter(chunk, encoding))
         if (contentTypeFilter(response)) {
           if (dataTypeFilter(chunk, encoding)) {
-            handleBody(span, chunk)
+            handleResponse(span, chunk)
           }
         }
         return bindRequestWrite.apply(this, arguments)
@@ -63,7 +59,7 @@ export class KlgHttpServerPatcher extends HttpServerPatcher {
       return (hasChunk && isUtf8)
     }
 
-    function handleBody (span, chunk) {
+    function handleResponse (span, chunk) {
       const response = safeParse(chunk)
       span.log({
         response
