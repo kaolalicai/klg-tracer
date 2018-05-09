@@ -3,6 +3,7 @@ import * as assert from 'assert'
 import {KlgHttpServerPatcher} from '../../../src/patch/HttpServer'
 
 const httpServerPatcher = new KlgHttpServerPatcher({
+  recordResponse: true,
   recordGetParams: true,
   recordPostData: true
 })
@@ -17,14 +18,25 @@ RunUtil.run(function (done) {
     assert(report.name === 'HTTP-POST:/')
     assert(report.spans.length === 1)
     const logs = report.spans[0].logs
-    assert(logs.length === 2)
+    assert(logs.length === 3)
+
     console.log('logs', logs)
     const getFields = logs[0].fields
-    const postFields = logs[1].fields
+    const postFields = logs[2].fields
+    const responseFields = logs[1].fields
+
+    console.log('getFields', getFields)
+    console.log('postFields', postFields)
+    console.log('responseFields', responseFields)
+
     assert(getFields[0].key === 'query')
     assert(JSON.stringify(getFields[0].value) === '{"name":"test"}')
+
     assert(postFields[0].key === 'data')
     assert(JSON.stringify(postFields[0].value) === '{"age":"100"}')
+
+    assert(responseFields[0].key === 'response')
+    assert.deepEqual(responseFields[0].value, {code: 0, msg: 'hello'})
 
     done()
   })
@@ -38,7 +50,7 @@ RunUtil.run(function (done) {
     })
 
     req.on('end', () => {
-      res.end('hello')
+      res.end(JSON.stringify({code: 0, msg: 'hello'}))
     })
   })
 

@@ -38,18 +38,13 @@ describe('unit test', () => {
     })
 
     it('should record http post data and query params', done => {
-      fork('http-record-query-and-data', done)
+      fork('http-server-record-query-and-data-response', done)
     })
   })
 
   describe('http client', () => {
-
-    // it('should urllib work ok', done => {
-    //   fork('urllib', done)
-    // })
-
     it('should record response data', done => {
-      fork('http-client-record-response', done)
+      fork('http-client-record-query-data-response', done)
     })
   })
 
