@@ -22,11 +22,7 @@ export class KlgHttpServerPatcher extends HttpServerPatcher {
     shimmer.wrap(response, 'write', function responseWriteWrapper (write) {
       const bindRequestWrite = traceManager.bind(write)
       return function wrappedResponseWrite (chunk, encoding, callback) {
-        if (contentTypeFilter(response)) {
-          if (dataTypeFilter(chunk, encoding)) {
-            handleResponse(span, chunk)
-          }
-        }
+        responseLog(response, chunk, encoding)
         return bindRequestWrite.apply(this, arguments)
       }
     })
@@ -34,23 +30,25 @@ export class KlgHttpServerPatcher extends HttpServerPatcher {
     shimmer.wrap(response, 'end', function responseWriteWrapper (write) {
       const bindRequestWrite = traceManager.bind(write)
       return function wrappedResponseWrite (chunk, encoding, callback) {
-        if (contentTypeFilter(response)) {
-          if (dataTypeFilter(chunk, encoding)) {
-            handleResponse(span, chunk)
-          }
-        }
+        responseLog(response, chunk, encoding)
         return bindRequestWrite.apply(this, arguments)
       }
     })
 
+    function responseLog (response, chunk, encoding) {
+      if (contentTypeFilter(response) && dataTypeFilter(chunk, encoding)) {
+        handleResponse(span, chunk)
+      }
+    }
+
     /**
-     * 未指定 contentType 或者 contentType 包含 text
+     * 未指定 contentType 或者 contentType 包含 text or json
      * @param response
      * @returns {boolean}
      */
     function contentTypeFilter (response) {
       const contentType = response.getHeader('content-type')
-      return !contentType || contentType.indexOf('text') > -1
+      return !contentType || contentType.indexOf('text') > -1 || contentType.indexOf('json') > -1
     }
 
     function dataTypeFilter (chunk, encoding) {
