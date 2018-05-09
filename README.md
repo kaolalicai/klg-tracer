@@ -16,37 +16,62 @@ Pandora 提供基于 OpenTracing 标准的链路追踪信息，在此基础上�
 
 ## QuickStart
 
-### 配合 Pandora 使用，纯粹拓展 tags
+### 一、配合 Pandora 使用，自定义tags
 
 TODO
 1. export 拓展好的类
 2. 覆盖 Pandora 的默认配置
 
-### 将 tracer 结果写入 Mongo
+### 二、将 tracer 结果写入 Mongo
 
 app.ts
 ```js
 import {TraceService, Tracer} from 'klg-tracer'
-const traceService = new TraceService()
 
-// 注册钩子
-traceService.registerHooks()
-
-// persist tracer to mongodb, collection's name default is 'Tracer'
-traceService.registerMongoReporter({
-    mongoUrl: 'mongodb:localhost:3306/tracer',
-    collectionName: 'Tracer'
-})
+new TraceService().registerHooks({
+    httpServer: {
+      // 过滤器，只记录特定接口, 注意 return true 的才会被过滤
+      requestFilter: function (req) {
+        const urlParsed = url.parse(req.url, true);
+        return urlParsed.pathname.indexOf('product/') === -1;
+      }
+    }
+  }).registerMongoReporter({
+    mongoUrl: config.database.mongodb[0].url,
+    collectionName: 'tracer'
+  });
 
 ```
 
+完整的配置可以见 src/domain
 
-启动你的 Web 服务并访问，相关的请求信息将会写入 Tracer 表中。
+```typescript
+interface ServerHookOptions {
+  httpServer?: {
+    recordGetParams?: boolean,    // 是否记录 query
+    recordPostData?: boolean,     // 是否记录 post data
+    recordResponse?: boolean,     // 是否记录 response
+    requestFilter?: requestFilter,  // 过滤器
+    interceptor?: interceptor       // 中间件 TODO
+  },
+  httpClient?: {
+    enabled: boolean, options?: {
+      recordGetParams?: boolean,
+      recordPostData?: boolean,
+      recordResponse?: boolean
+    }
+  },
+  mongodb?: { enabled: boolean, options?: any }
+}
+```
+
+
+启动你的 Web 服务并访问，相关的请求信息将会写入 tracer 表中。
 
 Search:
 
 ```js
-﻿db.Tracer.find({name : 'http-server'}).sort({_id : -1})
+﻿db.tracer.find({name : 'http-server'}).sort({_id : -1})
 ```
 
 Result:

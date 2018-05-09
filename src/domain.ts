@@ -39,15 +39,19 @@ export declare type requestFilter = (req) => boolean
 export declare type interceptor = (ctx, tracer) => void
 
 export interface ServerHookOptions {
-  recordGetParams?: boolean,
-  recordPostData?: boolean,
-  recordResponse?: boolean,
-  requestFilter?: requestFilter,
-  interceptor?: interceptor
-}
-
-export interface ServerHookOptions {
-  httpServer?: ServerHookOptions,
-  httpClient?: { enabled: boolean, options?: any },
+  httpServer?: {
+    recordGetParams?: boolean,    // 是否记录 query
+    recordPostData?: boolean,     // 是否记录 post data
+    recordResponse?: boolean,     // 是否记录 response
+    requestFilter?: requestFilter,  // 过滤器
+    interceptor?: interceptor       // 中间件 TODO
+  },
+  httpClient?: {
+    enabled: boolean, options?: {
+      recordGetParams?: boolean,
+      recordPostData?: boolean,
+      recordResponse?: boolean
+    }
+  },
   mongodb?: { enabled: boolean, options?: any }
 }
