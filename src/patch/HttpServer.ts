@@ -1,5 +1,5 @@
 import {HttpServerPatcher} from 'pandora-hook'
-import {parse as parseQS, ParsedUrlQuery} from 'querystring';
+import {parse as parseQS, ParsedUrlQuery} from 'querystring'
 import {IncomingMessage} from 'http'
 import {safeParse} from '../util/Utils'
 

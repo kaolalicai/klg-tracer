@@ -2,7 +2,7 @@ import {HttpClientShimmer} from 'pandora-hook'
 import {ClientRequest, ServerResponse} from 'http'
 import {query} from '../../../util/QueryParser'
 import {safeParse} from '../../../util/Utils'
-import {parse as parseQS} from 'querystring';
+import {parse as parseQS} from 'querystring'
 
 const debug = require('debug')('PandoraHook:HttpClient:Shimmer')
 
@@ -56,21 +56,11 @@ export class KlgHttpClientShimmer extends HttpClientShimmer {
     const shimmer = this.shimmer
     const self = this
 
-    /**
-     * 为什么不 super.wrapRequest(request, tracer, span)？因为父类 是以成员变量的方式定义 wrapRequest，无法 super
-     */
-    shimmer.wrap(request, 'emit', function requestEmitWrapper (emit) {
-      const bindRequestEmit = traceManager.bind(emit)
-
-      return function wrappedRequestEmit (this: ServerResponse, event, arg) {
-        if (event === 'error') {
-          self.handleError(span, arg)
-        } else if (event === 'response') {
-          self.handleResponse(tracer, span, arg)
-        }
-
-        return bindRequestEmit.apply(this, arguments)
-      }
+    request.once('error', (res) => {
+      self.handleError(span, res)
+    })
+    request.once('response', (res) => {
+      self.handleResponse(tracer, span, res)
     })
 
     /**
