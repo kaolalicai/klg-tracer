@@ -33,7 +33,7 @@ RunUtil.run(function (done) {
     assert(JSON.stringify(getFields[0].value) === '{"name":"test"}')
 
     assert(postFields[0].key === 'data')
-    assert(JSON.stringify(postFields[0].value) === '{"age":"100"}')
+    assert.deepEqual(postFields[0].value, {age: 100})
 
     assert(responseFields[0].key === 'response')
     assert.deepEqual(responseFields[0].value, {code: 0, msg: 'hello'})
@@ -60,6 +60,9 @@ RunUtil.run(function (done) {
     setTimeout(function () {
       urllib.request(`http://localhost:${port}/?name=test`, {
         method: 'post',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
         data: {
           age: 100
         }

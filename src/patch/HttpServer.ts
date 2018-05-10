@@ -1,5 +1,5 @@
 import {HttpServerPatcher} from 'pandora-hook'
-import {ParsedUrlQuery} from 'querystring'
+import {parse as parseQS, ParsedUrlQuery} from 'querystring';
 import {IncomingMessage} from 'http'
 import {safeParse} from '../util/Utils'
 
@@ -87,6 +87,20 @@ export class KlgHttpServerPatcher extends HttpServerPatcher {
       span.log({
         query
       })
+    }
+  }
+
+  bufferTransformer (buffer): ParsedUrlQuery | string {
+    const dataStr = buffer.toString('utf8')
+    let data = safeParse(dataStr)
+    if (typeof(data) === 'string') {
+      data = parseQS(dataStr)
+    }
+    try {
+      return data
+    } catch (error) {
+      debug('transform post data error. ', error)
+      return ''
     }
   }
 
