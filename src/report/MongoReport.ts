@@ -23,6 +23,7 @@ export class MongoReport implements IReport {
 
   async report (data: TraceData) {
     const tracers = this.transData(data)
+    debug('tracer trans result ', JSON.stringify(tracers))
     await this.crud.patchSave(tracers)
   }
 
@@ -33,7 +34,7 @@ export class MongoReport implements IReport {
 
   transData (data: TraceData): Array<any> {
     let result = []
-    debug('tracer result ', data)
+    debug('tracer result ', JSON.stringify(data))
     for (let span of data.spans) {
       const tag = cleanTags(span.tags)
       const log = cleanLogs(span.logs)
