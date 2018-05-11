@@ -40,6 +40,10 @@ describe('unit test', () => {
     it('should record http post data and query params and  response data', done => {
       fork('http-server-record-query-and-data-response', done)
     })
+
+    it('should koa hook work', done => {
+      fork('koa-record-query-and-data-response', done)
+    })
   })
 
   describe('http client', () => {

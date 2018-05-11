@@ -46,6 +46,7 @@
   "dependencies": {
     "klg-logger": "^1.0.4",
     "klg-tracer-model": "^2.0.0",
+    "koa": "^2.5.1",
     "pandora-hook": "^1.8.24",
     "pandora-hub": "^1.8.15",
     "pandora-metrics": "^1.8.18"
