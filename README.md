@@ -30,6 +30,7 @@ import {TraceService, Tracer} from 'klg-tracer'
 
 new TraceService().registerHooks({
     httpServer: {
+      useKoa:true, // 在 koa 设置钩子，比直接在 http 层设置钩子稳定
       // 过滤器，只记录特定接口, 注意 return true 的才会被过滤
       requestFilter: function (req) {
         const urlParsed = url.parse(req.url, true);
@@ -46,7 +47,7 @@ new TraceService().registerHooks({
 完整的配置可以见 src/domain
 
 ```typescript
-interface ServerHookOptions {
+interface TracerOptions {
   httpServer?: {
     recordGetParams?: boolean,    // 是否记录 query
     recordPostData?: boolean,     // 是否记录 post data

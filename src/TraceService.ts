@@ -1,16 +1,19 @@
 import * as _ from 'lodash'
 import {KlgHttpServerPatcher} from './patch/HttpServer'
+import {KoaServerPatcher} from './patch/KoaServer'
 import {KlgHttpClientPatcher} from './patch/HttpClient'
 import {MongodbPatcher} from './patch/Mongodb'
-import {ServerHookOptions} from './domain'
+import {TracerOptions} from './domain'
 import {EnvironmentUtil} from 'pandora-env'
 import {DefaultEnvironment} from './mock/DefaultEnvironment'
 import {logger} from './util/Logger'
 import {MongoReport, MongoReportOption} from './report/MongoReport'
+
 const debug = require('debug')('Klg:Tracer:TraceService')
 
 const defaultOptions = {
   httpServer: {
+    useKoa: false,
     recordGetParams: true,
     recordPostData: true,
     recordResponse: true
@@ -24,7 +27,10 @@ const defaultOptions = {
     }
   },
   mongodb: {
-    enabled: true, options: {}
+    enabled: true,
+    options: {
+      useMongoose: true
+    }
   }
 }
 
@@ -37,10 +43,14 @@ export class TraceService {
     EnvironmentUtil.getInstance().setCurrentEnvironment(new DefaultEnvironment())
   }
 
-  registerHooks (options: ServerHookOptions = defaultOptions) {
+  registerHooks (options: TracerOptions = defaultOptions) {
     _.defaultsDeep(options, defaultOptions)
     debug('options:', options)
-    new KlgHttpServerPatcher(options.httpServer).run()
+    if (options.httpServer.useKoa) {
+      new KoaServerPatcher(options.httpServer).run()
+    } else {
+      new KlgHttpServerPatcher(options.httpServer).run()
+    }
     if (options.httpClient.enabled) new KlgHttpClientPatcher(options.httpClient.options).run()
     if (options.mongodb.enabled) new MongodbPatcher(options.mongodb.options).run()
     return this

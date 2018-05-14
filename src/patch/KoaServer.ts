@@ -2,13 +2,13 @@ import * as http from 'http'
 import {safeParse, isFunction} from '../util/Utils'
 import * as bodyParser from 'koa-bodyparser'
 import {HttpServerPatcher} from 'pandora-hook'
-import {ServerHookOptions} from '../domain'
+import {HttpServerHookOptions} from '../domain'
 
 const debug = require('debug')('Klg:Tracer:Hook:KoaServerPatcher')
 
 export class KoaServerPatcher extends HttpServerPatcher {
 
-  constructor (options: ServerHookOptions) {
+  constructor (options: HttpServerHookOptions) {
     super(options)
     if (options && options.interceptor) {
       if (!isFunction(options.interceptor)) throw new Error('KoaServer interceptor must be a function')
